@@ -1,0 +1,6 @@
+{
+  "name": "Popcorn",
+  "description": "A curated suite of web tools by pop upi",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
