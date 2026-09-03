@@ -28,9 +28,9 @@ const tools = [
     ),
   },
   {
-    name: 'Tool three',
+    name: 'Interaction Library',
     path: '/tool3',
-    url: 'https://example.com',
+    url: 'https://coruscating-bunny-94b291.netlify.app/',
     cls: 't3',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -42,9 +42,9 @@ const tools = [
     ),
   },
   {
-    name: 'Tool four',
+    name: 'Pop Compress',
     path: '/tool4',
-    url: 'https://example.com',
+    url: 'https://magical-puffpuff-fe79ba.netlify.app/',
     cls: 't4',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
