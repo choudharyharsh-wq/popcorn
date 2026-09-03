@@ -3,7 +3,7 @@ import './App.css'
 
 const tools = [
   {
-    name: 'Tool one',
+    name: 'Rive Previewer',
     path: '/tool1',
     url: 'https://www.popcorn.design',
     cls: 't1',
@@ -17,9 +17,9 @@ const tools = [
     ),
   },
   {
-    name: 'Tool two',
+    name: 'Copy Writer',
     path: '/tool2',
-    url: 'https://example.com',
+    url: 'https://copy-writing-platform.vercel.app/',
     cls: 't2',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
