@@ -5,7 +5,7 @@ const tools = [
   {
     name: 'Rive Previewer',
     path: '/tool1',
-    url: 'https://www.popcorn.design',
+    url: 'https://joyful-beignet-8e4f63.netlify.app/',
     cls: 't1',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
