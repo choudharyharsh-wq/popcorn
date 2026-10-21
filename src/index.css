@@ -23,3 +23,7 @@ body {
     color: #e8e8e6;
   }
 }
+
+#root {
+  width: 100%;
+}

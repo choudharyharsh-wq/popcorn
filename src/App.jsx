@@ -1,4 +1,6 @@
+import { useState, useRef, useCallback } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
+import PopcornField from './PopcornField.jsx'
 import './App.css'
 
 const tools = [
@@ -76,10 +78,20 @@ function ToolFrame({ url }) {
 }
 
 function Home() {
+  const [flash, setFlash] = useState(false)
+  const flashTimer = useRef(0)
+  const onBigPop = useCallback(() => {
+    setFlash(true)
+    clearTimeout(flashTimer.current)
+    flashTimer.current = setTimeout(() => setFlash(false), 900)
+  }, [])
+
   return (
+    <div className="home">
+      <PopcornField onBigPop={onBigPop} />
     <div className="page">
       <div className="brand">pop upi</div>
-      <h1 className="title">
+      <h1 className={`title${flash ? ' flash' : ''}`}>
         grab your <span>popcorn</span>
       </h1>
       <p className="sub">sit back, pick a tool, enjoy the show.</p>
@@ -96,6 +108,7 @@ function Home() {
       <div className="footer">
         by <a href="https://popupi.com">pop upi</a>
       </div>
+    </div>
     </div>
   )
 }

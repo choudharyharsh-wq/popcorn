@@ -113,3 +113,86 @@
   .t3 .icon { background: #0a2a20; color: #5DCAA5; }
   .t4 .icon { background: #221e48; color: #AFA9EC; }
 }
+
+/* popcorn home: always-dark stage with drifting kernels */
+.home {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  color: #e8e8e6;
+  background: radial-gradient(ellipse at center, #1c1713 0%, #0c0a08 100%);
+}
+
+.home::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.popcorn-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.home .page {
+  position: relative;
+  z-index: 2;
+}
+
+.home .sub { color: #8a8680; }
+.home .footer { color: #6f6b66; }
+.home .footer a { color: #8a8680; }
+
+.home .tool {
+  background: rgba(30, 30, 28, 0.82);
+  border-color: #2a2a28;
+  backdrop-filter: blur(6px);
+}
+.home .tool:hover { border-color: #444; }
+.home .t1 .icon { background: #3a1a0e; color: #F0997B; }
+.home .t2 .icon { background: #332006; color: #FAC775; }
+.home .t3 .icon { background: #0a2a20; color: #5DCAA5; }
+.home .t4 .icon { background: #221e48; color: #AFA9EC; }
+
+.title.flash span {
+  animation: title-pop 0.9s ease-out;
+}
+
+@keyframes title-pop {
+  0% { transform: scale(1); text-shadow: 0 0 0 rgba(255, 170, 60, 0); }
+  25% { transform: scale(1.12); text-shadow: 0 0 28px rgba(255, 170, 60, 0.9); }
+  100% { transform: scale(1); text-shadow: 0 0 0 rgba(255, 170, 60, 0); }
+}
+
+.title span { display: inline-block; }
+
+.sound-toggle {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #2a2a28;
+  background: rgba(30, 30, 28, 0.82);
+  color: #8a8680;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.sound-toggle:hover { color: #e8e8e6; border-color: #444; }
+.sound-toggle[aria-pressed='true'] { color: #FAC775; }
+.sound-toggle svg { width: 18px; height: 18px; }
