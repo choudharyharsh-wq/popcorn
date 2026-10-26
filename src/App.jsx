@@ -137,6 +137,27 @@ function Home() {
   )
 }
 
+function NotFound() {
+  usePageIdentity(HOME_FAVICON, `Page not found · ${HOME_TITLE}`)
+  useEffect(() => {
+    const meta = document.createElement('meta')
+    meta.name = 'robots'
+    meta.content = 'noindex'
+    document.head.appendChild(meta)
+    return () => meta.remove()
+  }, [])
+  return (
+    <main className="notfound">
+      <div className="notfound-code">404</div>
+      <h1 className="notfound-title">
+        this <span>kernel</span> never popped
+      </h1>
+      <p className="notfound-sub">the page you're looking for doesn't exist.</p>
+      <Link to="/" className="notfound-link">back to popcorn.design</Link>
+    </main>
+  )
+}
+
 function App() {
   return (
     <Routes>
@@ -144,6 +165,7 @@ function App() {
       {tools.map((t) => (
         <Route key={t.path} path={t.path} element={<ToolFrame tool={t} />} />
       ))}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

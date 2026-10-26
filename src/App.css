@@ -196,3 +196,56 @@
 .sound-toggle:hover { color: #e8e8e6; border-color: #444; }
 .sound-toggle[aria-pressed='true'] { color: #FAC775; }
 .sound-toggle svg { width: 18px; height: 18px; }
+
+/* 404 */
+.notfound {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: #e8e8e6;
+  background: radial-gradient(ellipse at center, #1c1713 0%, #0c0a08 100%);
+}
+
+.notfound-code {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #999;
+  font-weight: 500;
+}
+
+.notfound-title {
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.notfound-title span {
+  color: #E24B4A;
+}
+
+.notfound-sub {
+  font-size: 15px;
+  color: #999;
+  margin-bottom: 1.2rem;
+}
+
+.notfound-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e8e8e6;
+  text-decoration: none;
+  border: 1px solid #3a3530;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  transition: border-color 0.15s;
+}
+
+.notfound-link:hover {
+  border-color: #E24B4A;
+}
