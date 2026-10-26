@@ -4,11 +4,63 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicons/home.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="A curated suite of web tools by pop upi" />
-    <title>popcorn.design</title>
+
+    <title>popcorn.design — a curated suite of web tools by pop upi</title>
+    <meta name="description" content="grab your popcorn. popcorn.design is a curated suite of web tools by pop upi: a Rive previewer, copy writer, interaction library and image compressor." />
+    <meta name="author" content="pop upi" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://popcorn.design/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="popcorn.design" />
+    <meta property="og:title" content="popcorn.design — grab your popcorn" />
+    <meta property="og:description" content="A curated suite of web tools by pop upi. Sit back, pick a tool, enjoy the show." />
+    <meta property="og:url" content="https://popcorn.design/" />
+    <meta property="og:image" content="https://popcorn.design/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="popcorn.design: grab your popcorn" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="popcorn.design — grab your popcorn" />
+    <meta name="twitter:description" content="A curated suite of web tools by pop upi. Sit back, pick a tool, enjoy the show." />
+    <meta name="twitter:image" content="https://popcorn.design/og-image.png" />
+    <meta name="twitter:image:alt" content="popcorn.design: grab your popcorn" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://popcorn.design/#website",
+            "url": "https://popcorn.design/",
+            "name": "popcorn.design",
+            "description": "A curated suite of web tools by pop upi.",
+            "inLanguage": "en",
+            "publisher": { "@id": "https://popcorn.design/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://popcorn.design/#organization",
+            "name": "pop upi",
+            "url": "https://popupi.com",
+            "logo": "https://popcorn.design/og-image.png"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <main style="font-family: sans-serif; text-align: center; padding: 3rem 1.5rem">
+        <h1>popcorn.design</h1>
+        <p>A curated suite of web tools by <a href="https://popupi.com">pop upi</a>: Rive Previewer, Copy Writer, Interaction Library and Pop Compress.</p>
+        <p>Please enable JavaScript to use these tools.</p>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
