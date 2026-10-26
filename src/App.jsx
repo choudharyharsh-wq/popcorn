@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import PopcornField from './PopcornField.jsx'
 import './App.css'
@@ -7,6 +7,7 @@ const tools = [
   {
     name: 'Rive Previewer',
     path: '/tool1',
+    favicon: '/favicons/tool1.svg',
     url: 'https://joyful-beignet-8e4f63.netlify.app/',
     cls: 't1',
     icon: (
@@ -21,6 +22,7 @@ const tools = [
   {
     name: 'Copy Writer',
     path: '/tool2',
+    favicon: '/favicons/tool2.svg',
     url: 'https://copy-writing-platform.vercel.app/',
     cls: 't2',
     icon: (
@@ -32,6 +34,7 @@ const tools = [
   {
     name: 'Interaction Library',
     path: '/tool3',
+    favicon: '/favicons/tool3.svg',
     url: 'https://coruscating-bunny-94b291.netlify.app/',
     cls: 't3',
     icon: (
@@ -46,6 +49,7 @@ const tools = [
   {
     name: 'Pop Compress',
     path: '/tool4',
+    favicon: '/favicons/tool4.svg',
     url: 'https://magical-puffpuff-fe79ba.netlify.app/',
     cls: 't4',
     icon: (
@@ -59,7 +63,26 @@ const tools = [
   },
 ]
 
-function ToolFrame({ url }) {
+const HOME_FAVICON = '/favicons/home.svg'
+const HOME_TITLE = 'popcorn.design'
+
+function usePageIdentity(favicon, title) {
+  useEffect(() => {
+    let link = document.querySelector('link[rel="icon"]')
+    if (!link) {
+      link = document.createElement('link')
+      link.rel = 'icon'
+      document.head.appendChild(link)
+    }
+    link.type = 'image/svg+xml'
+    link.href = favicon
+    document.title = title
+  }, [favicon, title])
+}
+
+function ToolFrame({ tool }) {
+  usePageIdentity(tool.favicon, `${tool.name} · ${HOME_TITLE}`)
+  const { url } = tool
   return (
     <iframe
       src={url}
@@ -78,6 +101,7 @@ function ToolFrame({ url }) {
 }
 
 function Home() {
+  usePageIdentity(HOME_FAVICON, HOME_TITLE)
   const [flash, setFlash] = useState(false)
   const flashTimer = useRef(0)
   const onBigPop = useCallback(() => {
@@ -118,7 +142,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       {tools.map((t) => (
-        <Route key={t.path} path={t.path} element={<ToolFrame url={t.url} />} />
+        <Route key={t.path} path={t.path} element={<ToolFrame tool={t} />} />
       ))}
     </Routes>
   )

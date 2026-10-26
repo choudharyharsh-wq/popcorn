@@ -4,7 +4,7 @@
     {
       "name": "popcorn-dev",
       "runtimeExecutable": "/Users/harsh/.local/share/fnm/node-versions/v24.20.0/installation/bin/npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": ["run", "dev", "--", "--port", "5656", "--strictPort"],
       "port": 5656
     }
   ]
