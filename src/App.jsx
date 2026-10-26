@@ -102,7 +102,7 @@ function ToolFrame({ tool }) {
           height: '100vh',
           border: 'none',
         }}
-        title="Tool"
+        title={tool.name}
         referrerPolicy="strict-origin-when-cross-origin"
         allow="clipboard-write; fullscreen"
         sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-popups allow-popups-to-escape-sandbox"
@@ -149,6 +149,8 @@ function Home() {
 
       <div className="footer">
         by <a href="https://popupi.com">pop upi</a>
+        {' · '}
+        <a href="https://popupi.com">contact</a>
       </div>
     </div>
     </div>

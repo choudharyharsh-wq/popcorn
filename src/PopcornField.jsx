@@ -446,7 +446,20 @@ export default function PopcornField({ onBigPop }) {
       m.active = false
     }
 
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     resize()
+    if (reduceMotion) {
+      // static, non-interactive field: draw once (and on resize), no animation loop
+      update(0.5)
+      draw()
+      const redraw = () => {
+        resize()
+        draw()
+      }
+      window.addEventListener('resize', redraw)
+      return () => window.removeEventListener('resize', redraw)
+    }
     window.addEventListener('resize', resize)
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerdown', onDown)

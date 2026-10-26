@@ -150,8 +150,8 @@
 }
 
 .home .sub { color: #8a8680; }
-.home .footer { color: #6f6b66; }
-.home .footer a { color: #8a8680; }
+.home .footer { color: #8a8680; }
+.home .footer a { color: #a8a39d; }
 
 .home .tool {
   background: rgba(30, 30, 28, 0.82);
@@ -277,4 +277,20 @@
 
 .frame-notice a:hover {
   text-decoration: underline;
+}
+
+/* keyboard focus */
+.tool:focus-visible,
+.footer a:focus-visible,
+.sound-toggle:focus-visible,
+.notfound-link:focus-visible,
+.frame-notice a:focus-visible {
+  outline: 2px solid #E24B4A;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title.flash span { animation: none; }
+  .tool { transition: none; }
+  .tool:hover { transform: none; }
 }
