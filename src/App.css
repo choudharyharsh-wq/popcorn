@@ -249,3 +249,32 @@
 .notfound-link:hover {
   border-color: #E24B4A;
 }
+
+/* tool load notice */
+.frame-notice {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  padding: 0.7rem 1.2rem;
+  max-width: calc(100vw - 2rem);
+  font-size: 13px;
+  color: #e8e8e6;
+  background: #1c1713;
+  border: 1px solid #3a3530;
+  border-radius: 14px;
+}
+
+.frame-notice a {
+  color: #E24B4A;
+  text-decoration: none;
+}
+
+.frame-notice a:hover {
+  text-decoration: underline;
+}

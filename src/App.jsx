@@ -83,20 +83,38 @@ function usePageIdentity(favicon, title) {
 function ToolFrame({ tool }) {
   usePageIdentity(tool.favicon, `${tool.name} · ${HOME_TITLE}`)
   const { url } = tool
+  const [loaded, setLoaded] = useState(false)
+  const [slow, setSlow] = useState(false)
+  useEffect(() => {
+    const timer = setTimeout(() => setSlow(true), 12000)
+    return () => clearTimeout(timer)
+  }, [])
   return (
-    <iframe
-      src={url}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        border: 'none',
-      }}
-      title="Tool"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-    />
+    <>
+      <iframe
+        src={url}
+        onLoad={() => setLoaded(true)}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          border: 'none',
+        }}
+        title="Tool"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allow="clipboard-write; fullscreen"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-popups allow-popups-to-escape-sandbox"
+      />
+      {slow && !loaded && (
+        <div className="frame-notice" role="status">
+          <span>this tool is taking a while to load.</span>
+          <a href={url} target="_blank" rel="noopener noreferrer">open in a new tab</a>
+          <Link to="/">back home</Link>
+        </div>
+      )}
+    </>
   )
 }
 
