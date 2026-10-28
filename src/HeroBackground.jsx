@@ -101,6 +101,13 @@ export default function HeroBackground() {
         <div className="hero-tiles">
           <Tiles />
         </div>
+        {/* same grid, unmasked, only along the bottom: fills the corners the rotated edge doesn't reach */}
+        <div className="hero-tiles hero-tiles-base">
+          <div className="hero-tiles-plain">
+            <TileRow />
+            <TileRow />
+          </div>
+        </div>
        </div>
       </div>
     </div>

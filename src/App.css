@@ -433,7 +433,7 @@
   left: 0;
   bottom: 0;
   width: 100%;
-  height: calc(var(--u) * 385);
+  height: calc(var(--u) * (385 + var(--lift)));
   overflow: hidden;
 }
 
@@ -484,6 +484,13 @@
   mask-position: calc(var(--u) * -281.81) calc(var(--u) * -143.49);
 }
 
+.hero-tiles-base {
+  /* start 140 design px above the bottom edge, which is below the lowest point of the torn edge */
+  clip-path: inset(calc(var(--u) * (385 + var(--lift) - 140 - 165.4)) 0 0 0);
+}
+
+.hero-tiles-plain { width: 100%; height: 100%; }
+
 .hero-tile-row { display: flex; }
 
 .hero-tile-row img {
@@ -499,6 +506,7 @@
   --u: min(calc(100cqw / 1512), calc(100svh / 1215));
   --sx: 1;
   --sy: 1;
+  --lift: 120; /* design px the white strip is raised, so the tool icons sit on white */
   container-type: inline-size;
   width: 100%;
 }
@@ -518,7 +526,7 @@
 .intro-tiles {
   position: absolute;
   left: 50%;
-  top: calc(var(--u) * -219.63);
+  top: calc(var(--u) * (-219.63 - var(--lift)));
   width: calc(var(--u) * 1512);
   transform: translateX(-50%) scaleX(var(--sx));
 }
@@ -618,4 +626,9 @@
   .launch-icon, .launch-out .launch-icon { animation: none; }
   .launch-out { animation-duration: 0.3s; }
   .home .tool.launching .app-icon, .home .tool.launching::after { animation: none; }
+}
+
+/* phones: the icons sit above the strip, so it stays at its original height */
+@media (max-width: 640px) {
+  .landing { --lift: 0; }
 }
