@@ -433,7 +433,7 @@
   left: 0;
   bottom: 0;
   width: 100%;
-  height: calc(var(--u) * (385 + var(--lift)));
+  height: var(--strip-h);
   overflow: hidden;
 }
 
@@ -467,7 +467,7 @@
   left: calc(var(--u) * -3);
   top: calc(var(--u) * 165.4);
   width: calc(var(--u) * 1518);
-  height: calc(var(--u) * 880.77);
+  height: calc(var(--strip-h) - var(--u) * 165.4);
 }
 
 
@@ -485,21 +485,18 @@
 }
 
 .hero-tiles-base {
-  /* start 140 design px above the bottom edge, which is below the lowest point of the torn edge */
-  clip-path: inset(calc(var(--u) * (385 + var(--lift) - 140 - 165.4)) 0 0 0);
+  /* starts 365 design px below the top of the strip, which is under the lowest point of the torn edge */
+  clip-path: inset(calc(var(--u) * 199.6) 0 0 0);
 }
 
 .hero-tiles-plain { width: 100%; height: 100%; }
 
-.hero-tile-row { display: flex; }
-
-.hero-tile-row img {
-  position: static;
-  flex: none;
-  width: calc(var(--u) * 304.73);
-  height: calc(var(--u) * 438.76);
-  object-fit: cover;
+.hero-tiles-mask,
+.hero-tiles-plain,
+.intro-tiles-inner {
+  background: url('/hero/strip-texture.webp') 0 0 / calc(var(--u) * 304.73) calc(var(--u) * 438.76) repeat;
 }
+
 
 /* landing: the hero, then a section where the quilted white strip carries on */
 .landing {
@@ -507,6 +504,7 @@
   --sx: 1;
   --sy: 1;
   --lift: 120; /* design px the white strip is raised, so the tool icons sit on white */
+  --strip-h: calc(var(--u) * (385 + var(--lift)));
   container-type: inline-size;
   width: 100%;
 }
@@ -526,12 +524,14 @@
 .intro-tiles {
   position: absolute;
   left: 50%;
-  top: calc(var(--u) * (-219.63 - var(--lift)));
+  /* pick the grid up exactly where the strip above ends */
+  top: calc(var(--u) * 165.4 - var(--strip-h));
+  bottom: 0;
   width: calc(var(--u) * 1512);
   transform: translateX(-50%) scaleX(var(--sx));
 }
 
-.intro-tiles-inner { margin-left: calc(var(--u) * -3); width: calc(var(--u) * 1518); }
+.intro-tiles-inner { height: 100%; margin-left: calc(var(--u) * -3); width: calc(var(--u) * 1518); }
 
 .intro-text {
   position: relative;
@@ -547,10 +547,6 @@
   color: rgba(0, 0, 0, 0.55);
 }
 
-/* phones: the strip is too thin to hold the icons, so they sit on the dark glow and need light labels */
-@media (max-width: 640px) {
-  .home .label { color: #f3ebe4; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
-}
 
 /* tap: the icon pops and sends out a ripple while the tool opens in a new tab */
 .home .tool { position: relative; }
@@ -628,7 +624,11 @@
   .home .tool.launching .app-icon, .home .tool.launching::after { animation: none; }
 }
 
-/* phones: the icons sit above the strip, so it stays at its original height */
+/* phones: a taller white strip carries the two rows of icons */
 @media (max-width: 640px) {
-  .landing { --lift: 0; }
+  .landing { --strip-h: 52svh; }
+  .hero-art { top: calc(var(--u) * -120 + 9svh); }
+  .home .grid { grid-template-columns: repeat(2, 100px); gap: 30px 46px; }
+  .home .tool { width: 100px; }
+  .home .label { font-size: 14px; }
 }

@@ -193,15 +193,7 @@ function Home() {
 
     <section className="intro" aria-label="About Pop Design">
       <div className="intro-tiles" aria-hidden="true">
-        <div className="intro-tiles-inner">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((r) => (
-            <div className="hero-tile-row" key={r}>
-              {[0, 1, 2, 3, 4].map((i) => (
-                <img key={i} src="/hero/strip-texture.webp" alt="" />
-              ))}
-            </div>
-          ))}
-        </div>
+        <div className="intro-tiles-inner" />
       </div>
       <p className="intro-text">{INTRO_TEXT}</p>
     </section>

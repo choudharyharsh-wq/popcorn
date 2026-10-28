@@ -4,27 +4,6 @@ import { useEffect, useRef } from 'react'
 // Every size is a multiple of --u (one Figma px), so the artwork scales with
 // the page width; the wordmark hangs from the top and the strip sits on the bottom edge.
 
-const TILES = [0, 1, 2, 3, 4]
-
-function TileRow() {
-  return (
-    <div className="hero-tile-row">
-      {TILES.map((i) => (
-        <img key={i} src="/hero/strip-texture.webp" alt="" />
-      ))}
-    </div>
-  )
-}
-
-function Tiles() {
-  return (
-    <div className="hero-tiles-mask">
-      <TileRow />
-      <TileRow />
-    </div>
-  )
-}
-
 export default function HeroBackground() {
   const ref = useRef(null)
 
@@ -99,14 +78,11 @@ export default function HeroBackground() {
         <img className="hero-strip-glow" src="/hero/strip-glow.svg" alt="" />
         <img className="hero-strip-shape" src="/hero/strip-shape.svg" alt="" />
         <div className="hero-tiles">
-          <Tiles />
+          <div className="hero-tiles-mask" />
         </div>
         {/* same grid, unmasked, only along the bottom: fills the corners the rotated edge doesn't reach */}
         <div className="hero-tiles hero-tiles-base">
-          <div className="hero-tiles-plain">
-            <TileRow />
-            <TileRow />
-          </div>
+          <div className="hero-tiles-plain" />
         </div>
        </div>
       </div>
