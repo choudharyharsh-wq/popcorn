@@ -168,12 +168,11 @@ function NotFound() {
   }, [])
   return (
     <main className="notfound">
-      <div className="notfound-code">404</div>
+      <div className="notfound-code" aria-hidden="true">404</div>
       <h1 className="notfound-title">
-        this <span>kernel</span> never popped
+        <span className="sr-only">404: </span>this <span>kernel</span> never popped
       </h1>
-      <p className="notfound-sub">the page you're looking for doesn't exist.</p>
-      <Link to="/" className="notfound-link">back to popcorn.design</Link>
+      <Link to="/" className="notfound-link">← back to popcorn.design</Link>
     </main>
   )
 }

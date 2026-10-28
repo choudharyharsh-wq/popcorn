@@ -199,27 +199,36 @@
 
 /* 404 */
 .notfound {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 1.4rem;
   padding: 2rem 1.5rem;
   text-align: center;
+  overflow: hidden;
   color: #e8e8e6;
   background: radial-gradient(ellipse at center, #1c1713 0%, #0c0a08 100%);
 }
 
 .notfound-code {
-  font-size: 13px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #999;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(9rem, 38vw, 30rem);
   font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(247, 232, 196, 0.05);
+  user-select: none;
+  pointer-events: none;
 }
 
 .notfound-title {
+  position: relative;
   font-size: 34px;
   font-weight: 500;
   line-height: 1.2;
@@ -229,25 +238,26 @@
   color: #E24B4A;
 }
 
-.notfound-sub {
-  font-size: 15px;
-  color: #999;
-  margin-bottom: 1.2rem;
-}
-
 .notfound-link {
-  font-size: 13px;
+  position: relative;
+  font-size: 14px;
   font-weight: 500;
-  color: #e8e8e6;
+  color: #E24B4A;
   text-decoration: none;
-  border: 1px solid #3a3530;
-  border-radius: 999px;
-  padding: 0.6rem 1.2rem;
-  transition: border-color 0.15s;
 }
 
 .notfound-link:hover {
-  border-color: #E24B4A;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 /* tool load notice */
