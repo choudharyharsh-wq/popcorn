@@ -224,6 +224,60 @@ function makeNoise(ac) {
   return buf
 }
 
+// Real popcorn pops, cut from a CC0 field recording (see public/sounds/CREDITS.txt).
+// pops.mp3 holds 12 different pops; each entry is [start, length] in seconds.
+const POP_URL = '/sounds/pops.mp3'
+const POP_SLICES = [
+  [0.08, 0.1946],
+  [0.3946, 0.1566],
+  [0.6712, 0.1407],
+  [0.9318, 0.116],
+  [1.1678, 0.116],
+  [1.4038, 0.197],
+  [1.7208, 0.116],
+  [1.9568, 0.1267],
+  [2.2034, 0.2079],
+  [2.5314, 0.1578],
+  [2.8092, 0.1404],
+  [3.0696, 0.326],
+]
+
+function loadPopSamples(entry) {
+  fetch(POP_URL)
+    .then((r) => r.arrayBuffer())
+    .then((b) => entry.ac.decodeAudioData(b))
+    .then((buf) => {
+      entry.buf = buf
+    })
+    .catch(() => {}) // keep the synthesized pop if the file can't be loaded
+}
+
+let lastSlice = -1
+
+// pan: -1 (left) to 1 (right), taken from where the kernel is on the page
+function playSample(ac, buf, vol, pan) {
+  let i = (Math.random() * POP_SLICES.length) | 0
+  if (i === lastSlice) i = (i + 1) % POP_SLICES.length // never the same pop twice in a row
+  lastSlice = i
+  const [at, dur] = POP_SLICES[i]
+  const src = ac.createBufferSource()
+  src.buffer = buf
+  src.playbackRate.value = 0.9 + Math.random() * 0.24 // slight pitch change: every pop sounds different
+  const g = ac.createGain()
+  g.gain.value = vol * (0.65 + Math.random() * 0.35)
+  let out = g
+  src.connect(g)
+  if (ac.createStereoPanner) {
+    const p = ac.createStereoPanner()
+    p.pan.value = pan
+    g.connect(p)
+    out = p
+  }
+  out.connect(ac.destination)
+  src.start(ac.currentTime, Math.max(0, at - 0.02), dur + 0.04)
+}
+
+// Fallback while the recording is still loading (or if it fails): a synthesized pop.
 function playPop(ac, noise, vol) {
   const t = ac.currentTime
   const o = ac.createOscillator()
@@ -270,7 +324,8 @@ export default function PopcornField({ onBigPop }) {
     const next = !soundOn
     if (next && !audioRef.current) {
       const ac = new (window.AudioContext || window.webkitAudioContext)()
-      audioRef.current = { ac, noise: makeNoise(ac), last: 0 }
+      audioRef.current = { ac, noise: makeNoise(ac), buf: null, last: 0 }
+      loadPopSamples(audioRef.current)
     }
     if (next) audioRef.current.ac.resume()
     soundRef.current = next
@@ -360,9 +415,11 @@ export default function PopcornField({ onBigPop }) {
       }
 
       const a = audioRef.current
-      if (soundRef.current && a && now - a.last > 60) {
+      if (soundRef.current && a && now - a.last > 45) {
         a.last = now
-        playPop(a.ac, a.noise, 0.4 + k.z * 0.6)
+        const vol = 0.4 + k.z * 0.6
+        if (a.buf) playSample(a.ac, a.buf, vol, clamp((k.x / w) * 2 - 1, -1, 1) * 0.7)
+        else playPop(a.ac, a.noise, vol)
       }
     }
 
