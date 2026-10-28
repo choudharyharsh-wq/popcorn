@@ -89,10 +89,6 @@
   font-weight: 500;
 }
 
-.t1 .icon { background: #FAECE7; color: #D85A30; }
-.t2 .icon { background: #FAEEDA; color: #BA7517; }
-.t3 .icon { background: #E1F5EE; color: #1D9E75; }
-.t4 .icon { background: #EEEDFE; color: #7F77DD; }
 
 .footer {
   font-size: 12px;
@@ -116,11 +112,7 @@
   .tool:hover {
     border-color: #444;
   }
-  .t1 .icon { background: #3a1a0e; color: #F0997B; }
-  .t2 .icon { background: #332006; color: #FAC775; }
-  .t3 .icon { background: #0a2a20; color: #5DCAA5; }
-  .t4 .icon { background: #221e48; color: #AFA9EC; }
-}
+        }
 
 /* popcorn home: always-dark stage with drifting kernels */
 .home {
@@ -148,7 +140,7 @@
   z-index: 2;
   max-width: none;
   margin: 0;
-  padding: 0 1rem calc(var(--u) * 125);
+  padding: 0 1rem calc(var(--u) * 70);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -159,9 +151,8 @@
 .home .page > * { pointer-events: auto; }
 
 .home .grid {
-  display: grid;
-  grid-template-columns: repeat(4, clamp(120px, calc(var(--u) * 190), 200px));
-  gap: 12px;
+  display: flex;
+  gap: clamp(18px, calc(var(--u) * 56), 52px);
   margin: 0;
 }
 
@@ -178,20 +169,48 @@
 
 @media (max-width: 640px) {
   .home .page { padding-bottom: 3.5rem; }
-  .home .grid { grid-template-columns: repeat(2, minmax(0, 150px)); }
+  .home .grid { display: grid; grid-template-columns: repeat(2, 84px); gap: 22px 40px; }
+  .home .tool { width: 84px; }
 }
 
 
+/* app-icon tiles: no card, just the icon and its name */
 .home .tool {
-  background: rgba(30, 30, 28, 0.82);
-  border-color: #2a2a28;
-  backdrop-filter: blur(6px);
+  width: clamp(76px, calc(var(--u) * 124), 120px);
+  padding: 0;
+  gap: 9px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.home .tool:hover { border-color: #444; }
-.home .t1 .icon { background: #3a1a0e; color: #F0997B; }
-.home .t2 .icon { background: #332006; color: #FAC775; }
-.home .t3 .icon { background: #0a2a20; color: #5DCAA5; }
-.home .t4 .icon { background: #221e48; color: #AFA9EC; }
+
+.home .tool:hover { transform: none; border-color: transparent; }
+.home .tool:active { transform: none; }
+
+.app-icon {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 7px 10px rgba(30, 14, 6, 0.38));
+  transition: transform 0.22s cubic-bezier(0.3, 1.5, 0.5, 1), filter 0.22s;
+}
+
+.home .tool:hover .app-icon {
+  transform: translateY(-5px) scale(1.08);
+  filter: drop-shadow(0 12px 14px rgba(30, 14, 6, 0.42));
+}
+
+.home .tool:active .app-icon { transform: scale(0.9); }
+
+.home .label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #2b2520;
+}
+
 
 .title.flash span {
   animation: title-pop 0.9s ease-out;
@@ -518,4 +537,85 @@
   letter-spacing: -0.03em;
   text-align: center;
   color: rgba(0, 0, 0, 0.55);
+}
+
+/* phones: the strip is too thin to hold the icons, so they sit on the dark glow and need light labels */
+@media (max-width: 640px) {
+  .home .label { color: #f3ebe4; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+}
+
+/* tap: the icon pops and sends out a ripple while the tool opens in a new tab */
+.home .tool { position: relative; }
+
+.home .tool.launching .app-icon { animation: icon-launch 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+
+.home .tool.launching::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 24%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+  animation: icon-ring 0.7s ease-out forwards;
+}
+
+@keyframes icon-launch {
+  0% { transform: scale(0.88); }
+  38% { transform: translateY(-9px) scale(1.2); filter: brightness(1.18) drop-shadow(0 14px 16px rgba(30, 14, 6, 0.45)); }
+  100% { transform: scale(1); }
+}
+
+@keyframes icon-ring {
+  from { transform: scale(1); opacity: 0.9; }
+  to { transform: scale(1.75); opacity: 0; }
+}
+
+/* launch splash shown in the new tab while the tool loads */
+.launch {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: radial-gradient(62% 58% at 50% 46%, var(--tint), #0c0a08 74%);
+}
+
+.launch-icon {
+  width: clamp(104px, 17vmin, 156px);
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.5));
+  animation: launch-in 0.65s cubic-bezier(0.2, 1.5, 0.4, 1) both, launch-breathe 1.8s ease-in-out 0.65s infinite;
+}
+
+.launch-icon svg { display: block; width: 100%; height: auto; }
+
+.launch-name {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #f3ebe4;
+  animation: launch-name-in 0.5s ease-out 0.25s both;
+}
+
+.launch-out { animation: launch-fade 0.75s ease-in forwards; pointer-events: none; }
+.launch-out .launch-icon { animation: launch-zoom 0.75s cubic-bezier(0.5, 0, 0.85, 0.35) forwards; }
+.launch-out .launch-name { animation: launch-name-out 0.3s ease-in forwards; }
+
+@keyframes launch-in { from { transform: scale(0.35); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes launch-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes launch-zoom { to { transform: scale(11); opacity: 0; } }
+@keyframes launch-fade { 0%, 45% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes launch-name-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes launch-name-out { to { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .launch-icon, .launch-out .launch-icon { animation: none; }
+  .launch-out { animation-duration: 0.3s; }
+  .home .tool.launching .app-icon, .home .tool.launching::after { animation: none; }
 }

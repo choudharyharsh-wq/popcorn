@@ -2,65 +2,46 @@ import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import PopcornField from './PopcornField.jsx'
 import HeroBackground from './HeroBackground.jsx'
+import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon } from './ToolIcons.jsx'
 import './App.css'
 
+// `name` is what the tool actually is (tooltips, screen readers); `label` is the friendly name on the tile.
 const tools = [
   {
     name: 'Rive Previewer',
+    label: 'Wiggle',
+    tint: 'rgba(192, 132, 252, 0.6)',
     path: '/tool1',
     favicon: '/favicons/tool1.svg',
     url: 'https://joyful-beignet-8e4f63.netlify.app/',
-    cls: 't1',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 21l15-15l-3-3l-15 15l0 3l3 0z" />
-        <path d="M15 6l3 3" />
-        <path d="M9 3a2 2 0 0 0 2 2a2 2 0 0 0-2 2a2 2 0 0 0-2-2a2 2 0 0 0 2-2" />
-        <path d="M19 13a2 2 0 0 0 2 2a2 2 0 0 0-2 2a2 2 0 0 0-2-2a2 2 0 0 0 2-2" />
-      </svg>
-    ),
+    Icon: WiggleIcon,
   },
   {
     name: 'Copy Writer',
+    label: 'Quill',
+    tint: 'rgba(251, 146, 60, 0.55)',
     path: '/tool2',
     favicon: '/favicons/tool2.svg',
     url: 'https://copy-writing-platform.vercel.app/',
-    cls: 't2',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M13 3l0 7l6 0l-8 11l0-7l-6 0l8-11" />
-      </svg>
-    ),
+    Icon: QuillIcon,
   },
   {
     name: 'Interaction Library',
+    label: 'Poke',
+    tint: 'rgba(56, 189, 248, 0.5)',
     path: '/tool3',
     favicon: '/favicons/tool3.svg',
     url: 'https://coruscating-bunny-94b291.netlify.app/',
-    cls: 't3',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 3v18h18" />
-        <circle cx="9" cy="9" r="2" />
-        <circle cx="19" cy="7" r="2" />
-        <circle cx="14" cy="15" r="2" />
-      </svg>
-    ),
+    Icon: PokeIcon,
   },
   {
     name: 'Pop Compress',
+    label: 'Squish',
+    tint: 'rgba(99, 102, 241, 0.6)',
     path: '/tool4',
     favicon: '/favicons/tool4.svg',
     url: 'https://magical-puffpuff-fe79ba.netlify.app/',
-    cls: 't4',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 21a9 9 0 0 1 0-18c4.97 0 9 3.582 9 8c0 1.06-.474 2.078-1.318 2.828S17.938 15 16.5 15H14a2 2 0 0 0-1 3.75A1.3 1.3 0 0 1 12 21" />
-        <circle cx="7.5" cy="10.5" r=".5" fill="currentColor" />
-        <circle cx="12" cy="7.5" r=".5" fill="currentColor" />
-        <circle cx="16.5" cy="10.5" r=".5" fill="currentColor" />
-      </svg>
-    ),
+    Icon: SquishIcon,
   },
 ]
 
@@ -90,10 +71,28 @@ function ToolFrame({ tool }) {
   const { url } = tool
   const [loaded, setLoaded] = useState(false)
   const [slow, setSlow] = useState(false)
+  // launch splash: the tool's icon pops in, then zooms away once the tool has loaded
+  // (and the intro has had a moment to play)
+  const [minShown, setMinShown] = useState(false)
+  const [gaveUp, setGaveUp] = useState(false)
+  const [finished, setFinished] = useState(false)
+  const leaving = (loaded && minShown) || gaveUp
+  const phase = finished ? 'done' : leaving ? 'out' : 'in'
   useEffect(() => {
     const timer = setTimeout(() => setSlow(true), 12000)
-    return () => clearTimeout(timer)
+    const min = setTimeout(() => setMinShown(true), 900)
+    const max = setTimeout(() => setGaveUp(true), 8000)
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(min)
+      clearTimeout(max)
+    }
   }, [])
+  useEffect(() => {
+    if (!leaving) return
+    const done = setTimeout(() => setFinished(true), 750)
+    return () => clearTimeout(done)
+  }, [leaving])
   return (
     <>
       <iframe
@@ -112,6 +111,14 @@ function ToolFrame({ tool }) {
         allow="clipboard-write; fullscreen"
         sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-popups allow-popups-to-escape-sandbox"
       />
+      {phase !== 'done' && (
+        <div className={`launch launch-${phase}`} style={{ '--tint': tool.tint }} aria-hidden="true">
+          <div className="launch-icon">
+            <tool.Icon />
+          </div>
+          <div className="launch-name">{tool.label}</div>
+        </div>
+      )}
       {slow && !loaded && (
         <div className="frame-notice" role="status">
           <span>this tool is taking a while to load.</span>
@@ -121,6 +128,30 @@ function ToolFrame({ tool }) {
       )}
     </>
   )
+}
+
+// Tap: let the icon's pop and ripple play first, then open the tool in a new tab.
+// Opening is delayed a beat (still counts as the same click for popup rules), and
+// ctrl/cmd/shift/middle clicks keep their normal browser behaviour.
+const RIPPLE_MS = 600
+
+function openTool(e) {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+  const el = e.currentTarget
+  const href = el.href
+  e.preventDefault()
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const open = () => {
+    el.classList.remove('launching')
+    const w = window.open(href, '_blank')
+    if (w) w.opener = null
+    else window.location.assign(href) // popup blocked: fall back to this tab
+  }
+  if (reduce) return open()
+  el.classList.remove('launching')
+  void el.offsetWidth
+  el.classList.add('launching')
+  setTimeout(open, RIPPLE_MS)
 }
 
 function Home() {
@@ -136,9 +167,18 @@ function Home() {
 
         <nav className="grid" aria-label="Tools">
           {tools.map((t) => (
-            <Link key={t.name} to={t.path} className={`tool ${t.cls}`}>
-              <div className="icon">{t.icon}</div>
-              <div className="label">{t.name}</div>
+            <Link
+              key={t.name}
+              to={t.path}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tool"
+              title={t.name}
+              aria-label={`${t.label}: ${t.name} (opens in a new tab)`}
+              onClick={openTool}
+            >
+              <t.Icon />
+              <div className="label">{t.label}</div>
             </Link>
           ))}
         </nav>
