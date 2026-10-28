@@ -63,6 +63,11 @@ export default function HeroBackground() {
             <stop offset="0" stopColor="#ff9a5c" stopOpacity="0.9" />
             <stop offset="1" stopColor="#7a3b22" stopOpacity="0.9" />
           </linearGradient>
+          <linearGradient id="design-ph" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#4a2515" />
+            <stop offset="0.55" stopColor="#8a4a28" />
+            <stop offset="1" stopColor="#f0a45a" />
+          </linearGradient>
           <clipPath id="design-clip">
             <text x="0" y="418.9">Design</text>
           </clipPath>
@@ -71,6 +76,7 @@ export default function HeroBackground() {
           </filter>
         </defs>
         <g className="hero-design-text">
+          <rect x="-87" y="-27" width="1440" height="590" fill="url(#design-ph)" clipPath="url(#design-clip)" />
           <image
             href="/hero/design-fill.webp"
             x="-86.69"

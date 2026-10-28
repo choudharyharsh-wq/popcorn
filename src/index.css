@@ -1,3 +1,20 @@
+/* self-hosted: no third-party request in front of the first paint */
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/DMSans-latin.woff2') format('woff2');
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  src: url('/fonts/Figtree-500-latin.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,20 +23,13 @@
 
 body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #fafaf8;
-  color: #1a1a1a;
+  background: #0c0a08;
+  color: #e8e8e6;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   -webkit-font-smoothing: antialiased;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #141413;
-    color: #e8e8e6;
-  }
 }
 
 #root {

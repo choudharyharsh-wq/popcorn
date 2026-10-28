@@ -51,13 +51,26 @@ function makeKernel() {
 }
 
 // Real popcorn photos (transparent cut-outs). Every pop uses one of these.
-const SPRITES = [1, 2, 3, 4, 5, 6].map((n) => `/popcorn/p${n}.webp`).map((src) => {
-  const img = new Image()
-  img.src = src
-  return img
-})
+// They load after the page has finished, at low priority, so they never compete
+// with the hero artwork.
+const SPRITE_COUNT = 6
+let SPRITES = []
 
-const pickSprite = () => SPRITES[(Math.random() * SPRITES.length) | 0]
+function loadSprites() {
+  if (SPRITES.length || typeof Image === 'undefined') return
+  SPRITES = Array.from({ length: SPRITE_COUNT }, (_, i) => {
+    const img = new Image()
+    img.fetchPriority = 'low'
+    img.decoding = 'async'
+    img.src = `/popcorn/p${i + 1}.webp`
+    return img
+  })
+}
+
+function pickSprite() {
+  const ready = SPRITES.filter((img) => img.complete && img.naturalWidth)
+  return ready.length ? ready[(Math.random() * ready.length) | 0] : null
+}
 
 function makePopcorn(k) {
   k.sprite = pickSprite()
@@ -142,7 +155,7 @@ function drawLobe(ctx, x, y, r, col) {
 
 function drawSprite(ctx, k, burstT) {
   const img = k.sprite
-  if (!img.complete || !img.naturalWidth) return
+  if (!img) return
   const long = k.s * 8.2
   const ratio = img.naturalWidth / img.naturalHeight
   const w = ratio >= 1 ? long : long * ratio
@@ -256,6 +269,16 @@ export default function PopcornField({ onBigPop }) {
     soundRef.current = next
     setSoundOn(next)
   }
+
+  useEffect(() => {
+    const start = () => {
+      if ('requestIdleCallback' in window) window.requestIdleCallback(loadSprites, { timeout: 2500 })
+      else setTimeout(loadSprites, 800)
+    }
+    if (document.readyState === 'complete') start()
+    else window.addEventListener('load', start, { once: true })
+    return () => window.removeEventListener('load', start)
+  }, [])
 
   useEffect(() => {
     const canvas = canvasRef.current
