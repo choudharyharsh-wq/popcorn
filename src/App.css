@@ -130,7 +130,7 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: 4;
 }
 
 .home .page {
@@ -228,7 +228,7 @@
   position: fixed;
   right: 16px;
   bottom: 16px;
-  z-index: 3;
+  z-index: 6;
   width: 36px;
   height: 36px;
   border-radius: 50%;

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { createPortal } from 'react-dom'
 
 const REPEL_R = 120
 const HEAT_R = 150
@@ -248,7 +249,13 @@ function playPop(ac, noise, vol) {
   n.start(t)
 }
 
+const noopSubscribe = () => () => {}
+
+// The field covers the whole page, not just the first screen: kernels live in page
+// coordinates and scroll with the content, while one viewport-sized canvas (rendered
+// straight into <body>) draws the part you can see.
 export default function PopcornField({ onBigPop }) {
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false)
   const canvasRef = useRef(null)
   const [soundOn, setSoundOn] = useState(false)
   const soundRef = useRef(false)
@@ -282,27 +289,32 @@ export default function PopcornField({ onBigPop }) {
 
   useEffect(() => {
     const canvas = canvasRef.current
+    if (!canvas) return
     const ctx = canvas.getContext('2d')
-    let w = 0
-    let h = 0
+    let w = 0 // page (world) width
+    let h = 0 // page (world) height
+    let vw = 0 // viewport
+    let vh = 0
     let dpr = 1
     let raf = 0
     let last = performance.now()
     let time = 0
     let kernels = []
     const popTimes = []
-    const m = { x: -1e4, y: -1e4, active: false, ax: 0, ay: 0, dwell: 0 }
+    // x/y are page coordinates; cx/cy is where the pointer is in the window
+    const m = { x: -1e4, y: -1e4, cx: -1e4, cy: -1e4, active: false, ax: 0, ay: 0, dwell: 0 }
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2)
-      w = window.innerWidth
-      h = window.innerHeight
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      canvas.style.width = `${w}px`
-      canvas.style.height = `${h}px`
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      const target = clamp(Math.round((w * h) / 13000), 45, 110)
+      vw = window.innerWidth
+      vh = window.innerHeight
+      w = document.documentElement.clientWidth
+      h = Math.max(document.documentElement.scrollHeight, vh)
+      canvas.width = vw * dpr
+      canvas.height = vh * dpr
+      canvas.style.width = `${vw}px`
+      canvas.style.height = `${vh}px`
+      const target = clamp(Math.round((w * h) / 13000), 45, 220)
       while (kernels.length < target) {
         const k = makeKernel()
         k.x = k.nx * w
@@ -355,6 +367,8 @@ export default function PopcornField({ onBigPop }) {
     }
 
     function update(dt) {
+      m.x = m.cx
+      m.y = m.cy + window.scrollY
       if (m.active) {
         if (Math.hypot(m.x - m.ax, m.y - m.ay) > 10) {
           m.ax = m.x
@@ -419,7 +433,10 @@ export default function PopcornField({ onBigPop }) {
     }
 
     function draw() {
-      ctx.clearRect(0, 0, w, h)
+      const sy = window.scrollY
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, -sy * dpr)
       const dwellF = clamp((m.dwell - 0.25) / 0.6)
       if (m.active && dwellF > 0.02) {
         ctx.globalCompositeOperation = 'lighter'
@@ -434,6 +451,7 @@ export default function PopcornField({ onBigPop }) {
       }
 
       for (const k of kernels) {
+        if (k.y < sy - 140 || k.y > sy + vh + 140) continue // off screen
         const soft = k.z < 0.65 ? (0.65 - k.z) / 0.3 : 0
         ctx.save()
         if (k.state === 0) {
@@ -496,15 +514,15 @@ export default function PopcornField({ onBigPop }) {
     }
 
     function onMove(e) {
-      m.x = e.clientX
-      m.y = e.clientY
+      m.cx = e.clientX
+      m.cy = e.clientY
       if (e.pointerType !== 'touch' || e.buttons) m.active = true
     }
     function onDown(e) {
-      m.x = e.clientX
-      m.y = e.clientY
-      m.ax = m.x
-      m.ay = m.y
+      m.cx = e.clientX
+      m.cy = e.clientY
+      m.ax = m.cx
+      m.ay = m.cy + window.scrollY
       m.dwell = 0
       m.active = true
     }
@@ -527,9 +545,16 @@ export default function PopcornField({ onBigPop }) {
         draw()
       }
       window.addEventListener('resize', redraw)
-      return () => window.removeEventListener('resize', redraw)
+      window.addEventListener('scroll', draw, { passive: true })
+      return () => {
+        window.removeEventListener('resize', redraw)
+        window.removeEventListener('scroll', draw)
+      }
     }
     window.addEventListener('resize', resize)
+    // the page can grow or shrink (fonts, images, rotation): keep the field matched to it
+    const pageObserver = new ResizeObserver(resize)
+    pageObserver.observe(document.body)
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerdown', onDown)
     window.addEventListener('pointerup', onUp)
@@ -540,6 +565,7 @@ export default function PopcornField({ onBigPop }) {
 
     return () => {
       cancelAnimationFrame(raf)
+      pageObserver.disconnect()
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerdown', onDown)
@@ -548,9 +574,11 @@ export default function PopcornField({ onBigPop }) {
       window.removeEventListener('blur', onLeave)
       document.documentElement.removeEventListener('mouseleave', onLeave)
     }
-  }, [])
+  }, [mounted])
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <>
       <canvas ref={canvasRef} className="popcorn-canvas" aria-hidden="true" />
       <button
@@ -569,6 +597,7 @@ export default function PopcornField({ onBigPop }) {
           )}
         </svg>
       </button>
-    </>
+    </>,
+    document.body,
   )
 }
