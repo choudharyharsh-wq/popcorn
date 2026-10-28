@@ -1,0 +1,100 @@
+import { useEffect, useRef } from 'react'
+
+// Home page backdrop, rebuilt from the Figma "hero" frame (1512 x 1215).
+// Every size is a multiple of --u (one Figma px), so the artwork scales with
+// the page width; the wordmark hangs from the top and the strip sits on the bottom edge.
+
+const TILES = [0, 1, 2, 3, 4]
+
+function TileRow() {
+  return (
+    <div className="hero-tile-row">
+      {TILES.map((i) => (
+        <img key={i} src="/hero/strip-texture.webp" alt="" />
+      ))}
+    </div>
+  )
+}
+
+function Tiles() {
+  return (
+    <div className="hero-tiles-mask">
+      <TileRow />
+      <TileRow />
+    </div>
+  )
+}
+
+export default function HeroBackground() {
+  const ref = useRef(null)
+
+  // The artwork is fitted to the screen (width and height), so on wide screens
+  // it ends up narrower than the page. --sx stretches the strip sideways to
+  // keep it edge to edge.
+  useEffect(() => {
+    const el = ref.current
+    const box = el.parentElement
+    const update = () => {
+      const { width, height } = box.getBoundingClientRect()
+      const u = Math.min(width / 1512, height / 1215)
+      el.style.setProperty('--sx', String(Math.max(1, width / (1512 * u))))
+      el.style.setProperty('--sy', String(Math.max(1, height / (1215 * u))))
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(box)
+    return () => ro.disconnect()
+  }, [])
+
+  return (
+    <div className="hero-bg" ref={ref} aria-hidden="true">
+      <div className="hero-plate" />
+
+      <div className="hero-art">
+      <img className="hero-pop" src="/hero/pop.svg" alt="" />
+
+      <svg className="hero-design" viewBox="0 0 1273 403" overflow="visible">
+        <defs>
+          <linearGradient id="design-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#fff" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0.4" />
+          </linearGradient>
+          <linearGradient id="design-stroke" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#ff9a5c" stopOpacity="0.9" />
+            <stop offset="1" stopColor="#7a3b22" stopOpacity="0.9" />
+          </linearGradient>
+          <clipPath id="design-clip">
+            <text x="0" y="418.9">Design</text>
+          </clipPath>
+          <filter id="design-blur" x="-5%" y="-30%" width="110%" height="160%">
+            <feGaussianBlur stdDeviation="13" />
+          </filter>
+        </defs>
+        <g className="hero-design-text">
+          <image
+            href="/hero/design-fill.webp"
+            x="-86.69"
+            y="-27.28"
+            width="1440"
+            height="590"
+            preserveAspectRatio="none"
+            clipPath="url(#design-clip)"
+          />
+          <text className="hero-design-pulse" fill="url(#design-fill)" filter="url(#design-blur)" x="0" y="418.9">Design</text>
+          <text fill="none" stroke="url(#design-stroke)" strokeWidth="1.1" x="0" y="418.9">Design</text>
+        </g>
+      </svg>
+      </div>
+
+      <div className="hero-strip">
+       <div className="hero-strip-inner">
+        <img className="hero-strip-glow" src="/hero/strip-glow.svg" alt="" />
+        <img className="hero-strip-shape" src="/hero/strip-shape.svg" alt="" />
+        <div className="hero-tiles">
+          <Tiles />
+        </div>
+       </div>
+      </div>
+    </div>
+  )
+}

@@ -1,6 +1,7 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import PopcornField from './PopcornField.jsx'
+import HeroBackground from './HeroBackground.jsx'
 import './App.css'
 
 const tools = [
@@ -120,39 +121,29 @@ function ToolFrame({ tool }) {
 
 function Home() {
   usePageIdentity(HOME_FAVICON, HOME_TITLE)
-  const [flash, setFlash] = useState(false)
-  const flashTimer = useRef(0)
-  const onBigPop = useCallback(() => {
-    setFlash(true)
-    clearTimeout(flashTimer.current)
-    flashTimer.current = setTimeout(() => setFlash(false), 900)
-  }, [])
 
   return (
     <div className="home">
-      <PopcornField onBigPop={onBigPop} />
-    <div className="page">
-      <div className="brand">pop upi</div>
-      <h1 className={`title${flash ? ' flash' : ''}`}>
-        grab your <span>popcorn</span>
-      </h1>
-      <p className="sub">sit back, pick a tool, enjoy the show.</p>
+      <HeroBackground />
+      <PopcornField />
+      <main className="page">
+        <h1 className="sr-only">Pop Design: web tools by the pop upi design team</h1>
 
-      <div className="grid">
-        {tools.map((t) => (
-          <Link key={t.name} to={t.path} className={`tool ${t.cls}`}>
-            <div className="icon">{t.icon}</div>
-            <div className="label">{t.name}</div>
-          </Link>
-        ))}
-      </div>
+        <nav className="grid" aria-label="Tools">
+          {tools.map((t) => (
+            <Link key={t.name} to={t.path} className={`tool ${t.cls}`}>
+              <div className="icon">{t.icon}</div>
+              <div className="label">{t.name}</div>
+            </Link>
+          ))}
+        </nav>
 
-      <div className="footer">
-        by <a href="https://popupi.com">pop upi</a>
-        {' · '}
-        <a href="https://popupi.com">contact</a>
-      </div>
-    </div>
+        <div className="footer">
+          by <a href="https://popupi.com">pop upi</a>
+          {' · '}
+          <a href="https://popupi.com">contact</a>
+        </div>
+      </main>
     </div>
   )
 }
