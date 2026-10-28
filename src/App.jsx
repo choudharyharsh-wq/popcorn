@@ -64,6 +64,10 @@ const tools = [
   },
 ]
 
+// placeholder copy, 40 words
+const INTRO_TEXT =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.'
+
 const HOME_FAVICON = '/favicons/home.svg'
 const HOME_TITLE = 'popcorn.design'
 
@@ -123,6 +127,7 @@ function Home() {
   usePageIdentity(HOME_FAVICON, HOME_TITLE)
 
   return (
+    <div className="landing">
     <div className="home">
       <HeroBackground />
       <PopcornField />
@@ -144,6 +149,22 @@ function Home() {
           <a href="https://popupi.com">contact</a>
         </div>
       </main>
+    </div>
+
+    <section className="intro" aria-label="About Pop Design">
+      <div className="intro-tiles" aria-hidden="true">
+        <div className="intro-tiles-inner">
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((r) => (
+            <div className="hero-tile-row" key={r}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <img key={i} src="/hero/strip-texture.webp" alt="" />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <p className="intro-text">{INTRO_TEXT}</p>
+    </section>
     </div>
   )
 }

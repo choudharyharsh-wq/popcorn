@@ -129,7 +129,7 @@
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-  touch-action: none;
+  touch-action: pan-y;
   color: #e8e8e6;
   background: #0c0a08;
 }
@@ -340,7 +340,6 @@
 .hero-bg {
   /* fit the whole artwork on screen: 1 --u = 1 Figma px */
   --u: min(calc(100cqw / 1512), calc(100cqh / 1215));
-  --sx: 1;
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -471,4 +470,49 @@
   width: calc(var(--u) * 304.73);
   height: calc(var(--u) * 438.76);
   object-fit: cover;
+}
+
+/* landing: the hero, then a section where the quilted white strip carries on */
+.landing {
+  --u: min(calc(100cqw / 1512), calc(100svh / 1215));
+  --sx: 1;
+  --sy: 1;
+  container-type: inline-size;
+  width: 100%;
+}
+
+.intro {
+  position: relative;
+  overflow: hidden;
+  min-height: 50svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--u) * 90) 1.5rem;
+  background: #ececec;
+}
+
+/* same tile grid as the hero strip, picked up where the hero ends */
+.intro-tiles {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--u) * -219.63);
+  width: calc(var(--u) * 1512);
+  transform: translateX(-50%) scaleX(var(--sx));
+}
+
+.intro-tiles-inner { margin-left: calc(var(--u) * -3); width: calc(var(--u) * 1518); }
+
+.intro-text {
+  position: relative;
+  z-index: 1;
+  max-width: 750px;
+  margin: 0;
+  font-family: 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  font-size: clamp(16px, calc(var(--u) * 20), 24px);
+  line-height: 1.45;
+  letter-spacing: -0.03em;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.55);
 }

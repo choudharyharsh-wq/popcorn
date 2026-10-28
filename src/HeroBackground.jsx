@@ -34,11 +34,12 @@ export default function HeroBackground() {
   useEffect(() => {
     const el = ref.current
     const box = el.parentElement
+    const landing = box.parentElement
     const update = () => {
       const { width, height } = box.getBoundingClientRect()
       const u = Math.min(width / 1512, height / 1215)
-      el.style.setProperty('--sx', String(Math.max(1, width / (1512 * u))))
-      el.style.setProperty('--sy', String(Math.max(1, height / (1215 * u))))
+      landing.style.setProperty('--sx', String(Math.max(1, width / (1512 * u))))
+      landing.style.setProperty('--sy', String(Math.max(1, height / (1215 * u))))
     }
     update()
     const ro = new ResizeObserver(update)
@@ -51,7 +52,6 @@ export default function HeroBackground() {
       <div className="hero-plate" />
 
       <div className="hero-art">
-      <img className="hero-pop" src="/hero/pop.svg" alt="" />
 
       <svg className="hero-design" viewBox="0 0 1273 403" overflow="visible">
         <defs>
@@ -84,6 +84,8 @@ export default function HeroBackground() {
           <text fill="none" stroke="url(#design-stroke)" strokeWidth="1.1" x="0" y="418.9">Design</text>
         </g>
       </svg>
+
+      <img className="hero-pop" src="/hero/pop.svg" alt="" />
       </div>
 
       <div className="hero-strip">
