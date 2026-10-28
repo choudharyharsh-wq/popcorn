@@ -9,8 +9,9 @@ const KERNEL_DARK = [62, 40, 22]
 const KERNEL_HI = [112, 76, 40]
 const KERNEL_HOT = [232, 137, 43]
 const CREAM = [247, 232, 196]
-const CREAM_SHADE = [214, 160, 70]
-const HULL = [96, 58, 26]
+// used only by the drawn-lobe popcorn (disabled, see below)
+// const CREAM_SHADE = [214, 160, 70]
+// const HULL = [96, 58, 26]
 
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
 const lerp = (a, b, t) => a + (b - a) * t
@@ -49,9 +50,29 @@ function makeKernel() {
   }
 }
 
+// Real popcorn photos (transparent cut-outs). Every pop uses one of these.
+const SPRITES = [1, 2, 3, 4, 5, 6].map((n) => `/popcorn/p${n}.webp`).map((src) => {
+  const img = new Image()
+  img.src = src
+  return img
+})
+
+const pickSprite = () => SPRITES[(Math.random() * SPRITES.length) | 0]
+
+function makePopcorn(k) {
+  k.sprite = pickSprite()
+  k.flip = Math.random() < 0.5 ? -1 : 1
+  k.tilt = (Math.random() - 0.5) * 1.2
+}
+
+/* ---- Drawn-lobe popcorn (the old circles). Disabled; to bring it back:
+ * 1. uncomment CREAM_SHADE and HULL at the top, drawLobe below, and this function,
+ * 2. in makePopcorn pick it for some pops (e.g. when Math.random() < 0.6),
+ * 3. in drawPopped uncomment the lobe and hull blocks.
+ *
 // Popcorn is a cluster of lobes that start collapsed on the kernel body
 // and spring out to their own target offsets, so the silhouette really changes.
-function makePopcorn(k) {
+function makeLobePopcorn(k) {
   const s = k.s
   const R = s * 2.7
   const n = 5 + ((Math.random() * 4) | 0)
@@ -78,6 +99,7 @@ function makePopcorn(k) {
   k.hull = { x0: 0, y0: s * 0.6, tx: low.tx, ty: low.ty + low.tr * 0.8, rot: (Math.random() - 0.5) * 1.2 }
   k.lobes = lobes
 }
+*/
 
 function teardropPath(ctx, s) {
   ctx.beginPath()
@@ -105,6 +127,7 @@ function drawKernelBody(ctx, s, glow, scx, scy) {
   ctx.restore()
 }
 
+/* disabled with the lobe popcorn above
 function drawLobe(ctx, x, y, r, col) {
   const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.1, x, y, r)
   g.addColorStop(0, rgb(mix(col, [255, 252, 240], 0.7)))
@@ -115,11 +138,32 @@ function drawLobe(ctx, x, y, r, col) {
   ctx.arc(x, y, r, 0, Math.PI * 2)
   ctx.fill()
 }
+*/
+
+function drawSprite(ctx, k, burstT) {
+  const img = k.sprite
+  if (!img.complete || !img.naturalWidth) return
+  const long = k.s * 8.2
+  const ratio = img.naturalWidth / img.naturalHeight
+  const w = ratio >= 1 ? long : long * ratio
+  const h = ratio >= 1 ? long / ratio : long
+  // springs out of the kernel: small, overshoots, settles
+  const e = easeOutBack(clamp(burstT / 0.45))
+  const sc = lerp(0.18, 1, e)
+  ctx.save()
+  ctx.rotate(k.tilt * (1 - e))
+  ctx.scale(k.flip * sc, sc)
+  ctx.drawImage(img, -w / 2, -h / 2, w, h)
+  ctx.restore()
+}
 
 function drawPopped(ctx, k) {
   const t = k.t
   const burstT = t - BURST_DELAY
   const R = k.s * 2.7
+  drawSprite(ctx, k, burstT)
+
+  /* ---- drawn-lobe popcorn (disabled): replaces drawSprite for pops that use makeLobePopcorn
   for (const l of k.lobes) {
     const q = clamp((burstT - l.delay) / 0.4)
     const e = easeOutBack(q)
@@ -131,15 +175,18 @@ function drawPopped(ctx, k) {
       mix(KERNEL_HOT, CREAM, clamp(q * 2.2)),
     )
   }
-  const h = k.hull
-  const qh = easeOutBack(clamp(burstT / 0.4))
-  ctx.save()
-  ctx.translate(lerp(h.x0, h.tx, qh), lerp(h.y0, h.ty, qh))
-  ctx.rotate(h.rot)
-  teardropPath(ctx, k.s * 0.42)
-  ctx.fillStyle = rgb(HULL)
-  ctx.fill()
-  ctx.restore()
+  {
+    const h = k.hull
+    const qh = easeOutBack(clamp(burstT / 0.4))
+    ctx.save()
+    ctx.translate(lerp(h.x0, h.tx, qh), lerp(h.y0, h.ty, qh))
+    ctx.rotate(h.rot)
+    teardropPath(ctx, k.s * 0.42)
+    ctx.fillStyle = rgb(HULL)
+    ctx.fill()
+    ctx.restore()
+  }
+  */
 
   // brief white flash as it bursts
   const f = clamp(burstT / 0.25)
@@ -338,7 +385,6 @@ export default function PopcornField({ onBigPop }) {
             k.state = 0
             k.heat = 0
             k.alpha = 0
-            k.lobes = null
             k.x = tx
             k.y = ty
             k.vx = 0
