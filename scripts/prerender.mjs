@@ -11,13 +11,28 @@ const { render } = await import(pathToFileURL(path.resolve('dist-server/entry-se
 const shell = fs.readFileSync(path.join(dist, 'index.html'), 'utf8')
 fs.writeFileSync(path.join(dist, 'shell.html'), shell)
 
+// Artwork file names carry a content hash (so a changed file always gets a new URL and can be
+// cached forever); the build manifest tells us what each source file ended up being called.
+const manifestPath = path.join(dist, '.vite', 'manifest.json')
+const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+const built = (src) => {
+  const entry = manifest[src]
+  return entry ? `/${entry.file}` : null // tiny files get inlined and have no separate URL
+}
+
+const images = [
+  ['src/assets/hero/plate.webp', 'high'],
+  ['src/assets/hero/design-fill.webp', 'high'],
+  ['src/assets/hero/pop.svg', 'high'],
+  ['src/assets/hero/strip-shape.svg', null],
+  ['src/assets/hero/strip-glow.svg', null],
+  ['src/assets/hero/strip-texture.webp', null],
+]
 const preloads = [
-  '<link rel="preload" as="image" href="/hero/plate.webp" fetchpriority="high" />',
-  '<link rel="preload" as="image" href="/hero/design-fill.webp" fetchpriority="high" />',
-  '<link rel="preload" as="image" href="/hero/pop.svg" fetchpriority="high" />',
-  '<link rel="preload" as="image" href="/hero/strip-shape.svg" />',
-  '<link rel="preload" as="image" href="/hero/strip-glow.svg" />',
-  '<link rel="preload" as="image" href="/hero/strip-texture.webp" />',
+  ...images.flatMap(([src, priority]) => {
+    const href = built(src)
+    return href ? [`<link rel="preload" as="image" href="${href}"${priority ? ` fetchpriority="${priority}"` : ''} />`] : []
+  }),
   '<link rel="preload" as="font" type="font/woff" href="/fonts/AwesomeSerifItalic-BdExraTall.woff" crossorigin />',
   '<link rel="preload" as="font" type="font/woff2" href="/fonts/DMSans-latin.woff2" crossorigin />',
 ].join('\n    ')
@@ -30,4 +45,5 @@ const html = shell
   .replace('</head>', `    ${preloads}\n  </head>`)
 
 fs.writeFileSync(path.join(dist, 'index.html'), html)
+fs.rmSync(path.join(dist, '.vite'), { recursive: true, force: true }) // not needed in production
 console.log(`prerendered / (${(html.length / 1024).toFixed(1)} KB html)`)

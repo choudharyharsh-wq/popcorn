@@ -1,4 +1,8 @@
 import { useEffect, useRef } from 'react'
+import designFillUrl from './assets/hero/design-fill.webp'
+import popUrl from './assets/hero/pop.svg'
+import stripGlowUrl from './assets/hero/strip-glow.svg'
+import stripShapeUrl from './assets/hero/strip-shape.svg'
 
 // Home page backdrop, rebuilt from the Figma "hero" frame (1512 x 1215).
 // Every size is a multiple of --u (one Figma px), so the artwork scales with
@@ -57,7 +61,7 @@ export default function HeroBackground() {
         <g className="hero-design-text">
           <rect x="-87" y="-27" width="1440" height="590" fill="url(#design-ph)" clipPath="url(#design-clip)" />
           <image
-            href="/hero/design-fill.webp"
+            href={designFillUrl}
             x="-86.69"
             y="-27.28"
             width="1440"
@@ -70,13 +74,13 @@ export default function HeroBackground() {
         </g>
       </svg>
 
-      <img className="hero-pop" src="/hero/pop.svg" alt="" />
+      <img className="hero-pop" src={popUrl} alt="" />
       </div>
 
       <div className="hero-strip">
        <div className="hero-strip-inner">
-        <img className="hero-strip-glow" src="/hero/strip-glow.svg" alt="" />
-        <img className="hero-strip-shape" src="/hero/strip-shape.svg" alt="" />
+        <img className="hero-strip-glow" src={stripGlowUrl} alt="" />
+        <img className="hero-strip-shape" src={stripShapeUrl} alt="" />
         <div className="hero-tiles">
           <div className="hero-tiles-mask" />
         </div>

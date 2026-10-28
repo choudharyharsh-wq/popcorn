@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
+import p1 from './assets/popcorn/p1.webp'
+import p2 from './assets/popcorn/p2.webp'
+import p3 from './assets/popcorn/p3.webp'
+import p4 from './assets/popcorn/p4.webp'
+import p5 from './assets/popcorn/p5.webp'
+import p6 from './assets/popcorn/p6.webp'
+import popsUrl from './assets/sounds/pops.mp3'
 
 const REPEL_R = 120
 const HEAT_R = 150
@@ -54,16 +61,16 @@ function makeKernel() {
 // Real popcorn photos (transparent cut-outs). Every pop uses one of these.
 // They load after the page has finished, at low priority, so they never compete
 // with the hero artwork.
-const SPRITE_COUNT = 6
+const SPRITE_URLS = [p1, p2, p3, p4, p5, p6]
 let SPRITES = []
 
 function loadSprites() {
   if (SPRITES.length || typeof Image === 'undefined') return
-  SPRITES = Array.from({ length: SPRITE_COUNT }, (_, i) => {
+  SPRITES = SPRITE_URLS.map((url) => {
     const img = new Image()
     img.fetchPriority = 'low'
     img.decoding = 'async'
-    img.src = `/popcorn/p${i + 1}.webp`
+    img.src = url
     return img
   })
 }
@@ -224,9 +231,9 @@ function makeNoise(ac) {
   return buf
 }
 
-// Real popcorn pops, cut from a CC0 field recording (see public/sounds/CREDITS.txt).
+// Real popcorn pops, cut from a CC0 field recording (see src/assets/sounds/CREDITS.txt).
 // pops.mp3 holds 12 different pops; each entry is [start, length] in seconds.
-const POP_URL = '/sounds/pops.mp3'
+const POP_URL = popsUrl
 const POP_SLICES = [
   [0.08, 0.1946],
   [0.3946, 0.1566],

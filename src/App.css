@@ -378,7 +378,7 @@
   height: calc(var(--u) * 1215);
   /* the tiny inline picture shows instantly, then the full-size plate paints over it */
   background:
-    url('/hero/plate.webp') center / 100% 100% no-repeat,
+    url('./assets/hero/plate.webp') center / 100% 100% no-repeat,
     url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAgACgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5VpQMmrLWxz0qzaWZdhxUOaSNFTbditDbF+1W4tPZiPlrqdG0TzsZFdVY+GA7qAtcNbGKB6mGwKnucBaaO5wdtFezW/hcLFnZ0orzHmd2e/DK6SijxB9pPAqW3fY3FU9/NOWTFe04Ox8xGpFO51Om6k8RGDXT6dr7o6neK81S4I6GrtvcOcYauGtg+c9XDZjCn0PabXxMTByRRXltveShQNxorgWWHfLNaT6H/9k=') center / 100% 100% no-repeat;
   transform: translateX(-50%) scale(var(--sx), var(--sy));
   transform-origin: 50% 0;
@@ -474,8 +474,8 @@
 .hero-tiles-mask {
   width: 100%;
   height: 100%;
-  -webkit-mask-image: url('/hero/strip-mask.svg');
-  mask-image: url('/hero/strip-mask.svg');
+  -webkit-mask-image: url('./assets/hero/strip-mask.svg');
+  mask-image: url('./assets/hero/strip-mask.svg');
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-size: calc(var(--u) * 2435.06) calc(var(--u) * 998.99);
@@ -494,7 +494,7 @@
 .hero-tiles-mask,
 .hero-tiles-plain,
 .intro-tiles-inner {
-  background: url('/hero/strip-texture.webp') 0 0 / calc(var(--u) * 304.73) calc(var(--u) * 438.76) repeat;
+  background: url('./assets/hero/strip-texture.webp') 0 0 / calc(var(--u) * 304.73) calc(var(--u) * 438.76) repeat;
 }
 
 
