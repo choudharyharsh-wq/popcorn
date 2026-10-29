@@ -80,3 +80,37 @@ export function SquishIcon() {
     </AppIcon>
   )
 }
+
+// Placeholders for tools that are not built yet
+export function GlintIcon() {
+  return (
+    <AppIcon id="gl" from="#FDA4AF" to="#E11D48">
+      <path d="M60 24L68 52L96 60L68 68L60 96L52 68L24 60L52 52Z" fill="#fff" />
+    </AppIcon>
+  )
+}
+
+export function DriftIcon() {
+  return (
+    <AppIcon id="dr" from="#86EFAC" to="#16A34A">
+      <path d="M24 44H78M24 62H96M24 80H64" {...stroke} strokeWidth="9" />
+    </AppIcon>
+  )
+}
+
+export function NudgeIcon() {
+  return (
+    <AppIcon id="nd" from="#FCA5A5" to="#F59E0B">
+      <rect x="30" y="30" width="60" height="60" rx="16" {...stroke} strokeWidth="8" />
+      <circle cx="60" cy="60" r="10" fill="#fff" />
+    </AppIcon>
+  )
+}
+
+export function FlipIcon() {
+  return (
+    <AppIcon id="fl" from="#C4B5FD" to="#7C3AED">
+      <path d="M32 50H86L74 38M88 70H34L46 82" {...stroke} strokeWidth="8" />
+    </AppIcon>
+  )
+}

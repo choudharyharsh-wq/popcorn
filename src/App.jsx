@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import PopcornField from './PopcornField.jsx'
 import HeroBackground from './HeroBackground.jsx'
-import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon } from './ToolIcons.jsx'
+import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, GlintIcon, DriftIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
 import './App.css'
 
 // `name` is what the tool actually is (tooltips, screen readers); `label` is the friendly name on the tile.
@@ -43,6 +43,14 @@ const tools = [
     url: 'https://magical-puffpuff-fe79ba.netlify.app/',
     Icon: SquishIcon,
   },
+]
+
+// not built yet: shown as placeholders so the grid reads as eight
+const soon = [
+  { label: 'Glint', Icon: GlintIcon },
+  { label: 'Drift', Icon: DriftIcon },
+  { label: 'Nudge', Icon: NudgeIcon },
+  { label: 'Flip', Icon: FlipIcon },
 ]
 
 // placeholder copy, 40 words
@@ -163,33 +171,8 @@ function Home() {
     <PopcornField />
     <div className="home">
       <HeroBackground />
-      <main className="page">
-        <h1 className="sr-only">Pop Design: web tools by the pop upi design team</h1>
-
-        <nav className="grid" aria-label="Tools">
-          {tools.map((t) => (
-            <Link
-              key={t.name}
-              to={t.path}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tool"
-              title={t.name}
-              aria-label={`${t.label}: ${t.name} (opens in a new tab)`}
-              onClick={openTool}
-            >
-              <t.Icon />
-              <div className="label">{t.label}</div>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="footer">
-          by <a href="https://popupi.com">pop upi</a>
-          {' · '}
-          <a href="https://popupi.com">contact</a>
-        </div>
-      </main>
+      <h1 className="sr-only">Pop Design: web tools by the pop upi design team</h1>
+      <p className="hero-caption">Tools by POPdesign</p>
     </div>
 
     <section className="intro" aria-label="About Pop Design">
@@ -198,7 +181,36 @@ function Home() {
           <div className="intro-tiles-inner" />
         </div>
       </div>
+      <h2 className="intro-title">Pick your POPcorn</h2>
+      <nav className="grid" aria-label="Tools">
+        {tools.map((t) => (
+          <Link
+            key={t.name}
+            to={t.path}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="tool"
+            title={t.name}
+            aria-label={`${t.label}: ${t.name} (opens in a new tab)`}
+            onClick={openTool}
+          >
+            <t.Icon />
+            <div className="label">{t.label}</div>
+          </Link>
+        ))}
+        {soon.map((t) => (
+          <div key={t.label} className="tool soon" aria-label={`${t.label}: coming soon`}>
+            <t.Icon />
+            <div className="label">{t.label}</div>
+          </div>
+        ))}
+      </nav>
       <p className="intro-text">{INTRO_TEXT}</p>
+      <div className="footer">
+        by <a href="https://popupi.com">pop upi</a>
+        {' · '}
+        <a href="https://popupi.com">contact</a>
+      </div>
     </section>
     </div>
   )

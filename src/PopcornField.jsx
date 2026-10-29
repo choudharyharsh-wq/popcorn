@@ -11,6 +11,11 @@ import { createPortal } from 'react-dom'
 import p7 from './assets/popcorn/p7.webp'
 import p8 from './assets/popcorn/p8.webp'
 import p9 from './assets/popcorn/p9.webp'
+import k1 from './assets/kernels/k1.webp'
+import k2 from './assets/kernels/k2.webp'
+import k3 from './assets/kernels/k3.webp'
+import k4 from './assets/kernels/k4.webp'
+import k5 from './assets/kernels/k5.webp'
 import popsUrl from './assets/sounds/pops.mp3'
 
 const REPEL_R = 120
@@ -55,6 +60,7 @@ function makeKernel() {
     f2: 0.15 + Math.random() * 0.2,
     heat: 0,
     alpha: 0,
+    ki: (Math.random() * 5) | 0, // which kernel photo
     state: 0, // 0 kernel, 1 popped (animating / lingering)
     t: 0,
     life: 0,
@@ -69,9 +75,19 @@ function makeKernel() {
 const SPRITE_URLS = [p7, p8, p9]
 // const SPRITE_URLS = [p1, p2, p3, p4, p5, p6, p7, p8, p9] // everything
 let SPRITES = []
+// photos of unpopped kernels (the drawn teardrop below is the fallback until they load)
+const KERNEL_URLS = [k1, k2, k3, k4, k5]
+let KERNEL_IMGS = []
 
 function loadSprites() {
   if (SPRITES.length || typeof Image === 'undefined') return
+  KERNEL_IMGS = KERNEL_URLS.map((url) => {
+    const img = new Image()
+    img.fetchPriority = 'low'
+    img.decoding = 'async'
+    img.src = url
+    return img
+  })
   SPRITES = SPRITE_URLS.map((url) => {
     const img = new Image()
     img.fetchPriority = 'low'
@@ -136,7 +152,25 @@ function teardropPath(ctx, s) {
   ctx.closePath()
 }
 
-function drawKernelBody(ctx, s, glow, scx, scy) {
+function drawKernelBody(ctx, s, glow, scx, scy, ki = 0) {
+  const img = KERNEL_IMGS[ki]
+  if (img && img.complete && img.naturalWidth) {
+    const long = s * 3.1
+    const ratio = img.naturalWidth / img.naturalHeight
+    const w = ratio >= 1 ? long : long * ratio
+    const h = ratio >= 1 ? long / ratio : long
+    ctx.save()
+    ctx.scale(scx, scy)
+    ctx.drawImage(img, -w / 2, -h / 2, w, h)
+    if (glow > 0.05) {
+      // heat: the same photo again, added on top so the kernel lights up orange
+      ctx.globalCompositeOperation = 'lighter'
+      ctx.globalAlpha *= glow * 0.45
+      ctx.drawImage(img, -w / 2, -h / 2, w, h)
+    }
+    ctx.restore()
+    return
+  }
   ctx.save()
   ctx.scale(scx, scy)
   teardropPath(ctx, s)
@@ -325,8 +359,11 @@ export default function PopcornField({ onBigPop }) {
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false)
   const canvasRef = useRef(null)
   const ghostRef = useRef(null)
-  const [soundOn, setSoundOn] = useState(false)
-  const soundRef = useRef(false)
+  // 'off' | 'real' (recorded pops) | 'synth' (the original generated pop)
+  const [soundMode, setSoundMode] = useState('off')
+  // popcorn is off until the visitor asks for it; 'hero' = only the orange top
+  const [cornMode, setCornMode] = useState('off')
+  const soundRef = useRef('off')
   const audioRef = useRef(null)
   const bigPopRef = useRef(onBigPop)
 
@@ -335,15 +372,15 @@ export default function PopcornField({ onBigPop }) {
   }, [onBigPop])
 
   function toggleSound() {
-    const next = !soundOn
-    if (next && !audioRef.current) {
+    const next = soundMode === 'off' ? 'real' : soundMode === 'real' ? 'synth' : 'off'
+    if (next !== 'off' && !audioRef.current) {
       const ac = new (window.AudioContext || window.webkitAudioContext)()
       audioRef.current = { ac, noise: makeNoise(ac), buf: null, last: 0 }
       loadPopSamples(audioRef.current)
     }
-    if (next) audioRef.current.ac.resume()
+    if (next !== 'off') audioRef.current.ac.resume()
     soundRef.current = next
-    setSoundOn(next)
+    setSoundMode(next)
   }
 
   useEffect(() => {
@@ -362,6 +399,13 @@ export default function PopcornField({ onBigPop }) {
     if (!canvas || !ghost) return
     const ctx = canvas.getContext('2d')
     const ghostCtx = ghost.getContext('2d')
+    if (cornMode === 'off') {
+      for (const [c, x] of [[canvas, ctx], [ghost, ghostCtx]]) {
+        x.setTransform(1, 0, 0, 1, 0, 0)
+        x.clearRect(0, 0, c.width, c.height)
+      }
+      return
+    }
     const popEl = document.querySelector('.hero-pop')
     let w = 0 // page (world) width
     let h = 0 // page (world) height
@@ -382,6 +426,12 @@ export default function PopcornField({ onBigPop }) {
       vh = window.innerHeight
       w = document.documentElement.clientWidth
       h = Math.max(document.documentElement.scrollHeight, vh)
+      if (cornMode === 'hero') {
+        // stop above the highest point of the torn white edge
+        const home = document.querySelector('.home')
+        const strip = document.querySelector('.hero-strip')
+        if (home && strip) h = Math.max(home.offsetHeight - strip.offsetHeight * 0.85, 1)
+      }
       canvas.width = vw * dpr
       canvas.height = vh * dpr
       canvas.style.width = `${vw}px`
@@ -390,7 +440,8 @@ export default function PopcornField({ onBigPop }) {
       ghost.height = canvas.height
       ghost.style.width = `${vw}px`
       ghost.style.height = `${vh}px`
-      const target = clamp(Math.round((w * h) / 13000), 45, 220)
+      // 40% of the original density (was w * h / 13000, clamped to 45..220)
+      const target = clamp(Math.round((w * h) / 32500), 18, 88)
       while (kernels.length < target) {
         const k = makeKernel()
         k.x = k.nx * w
@@ -436,10 +487,10 @@ export default function PopcornField({ onBigPop }) {
       }
 
       const a = audioRef.current
-      if (soundRef.current && a && now - a.last > 45) {
+      if (soundRef.current !== 'off' && a && now - a.last > 45) {
         a.last = now
         const vol = 0.4 + k.z * 0.6
-        if (a.buf) playSample(a.ac, a.buf, vol, clamp((k.x / w) * 2 - 1, -1, 1) * 0.7)
+        if (soundRef.current === 'real' && a.buf) playSample(a.ac, a.buf, vol, clamp((k.x / w) * 2 - 1, -1, 1) * 0.7)
         else playPop(a.ac, a.noise, vol)
       }
     }
@@ -558,7 +609,7 @@ export default function PopcornField({ onBigPop }) {
             ctx.shadowBlur = soft * 9 * dpr
             ctx.shadowColor = rgb(mix(KERNEL_DARK, KERNEL_HOT, glow))
           }
-          drawKernelBody(ctx, k.s, glow, 1, 1)
+          drawKernelBody(ctx, k.s, glow, 1, 1, k.ki)
         } else {
           ctx.translate(k.x, k.y)
           ctx.rotate(k.a)
@@ -571,7 +622,7 @@ export default function PopcornField({ onBigPop }) {
           if (k.t < BURST_DELAY) {
             // anticipation squash before the burst
             const u = k.t / BURST_DELAY
-            drawKernelBody(ctx, k.s, 1, 1 + 0.25 * u, 1 - 0.3 * u)
+            drawKernelBody(ctx, k.s, 1, 1 + 0.25 * u, 1 - 0.3 * u, k.ki)
           } else drawPopped(ctx, k)
         }
         ctx.restore()
@@ -670,7 +721,7 @@ export default function PopcornField({ onBigPop }) {
       window.removeEventListener('blur', onLeave)
       document.documentElement.removeEventListener('mouseleave', onLeave)
     }
-  }, [mounted])
+  }, [mounted, cornMode])
 
   if (!mounted) return null
 
@@ -679,22 +730,42 @@ export default function PopcornField({ onBigPop }) {
       <canvas ref={canvasRef} className="popcorn-canvas" aria-hidden="true" />
       <canvas ref={ghostRef} className="popcorn-canvas popcorn-ghost" aria-hidden="true" />
       {createPortal(
+      <>
+      <button
+        type="button"
+        className="sound-toggle hero-corn-toggle"
+        onClick={() => setCornMode((v) => (v === 'hero' ? 'off' : 'hero'))}
+        aria-pressed={cornMode === 'hero'}
+        aria-label={cornMode === 'hero' ? 'Hide popcorn' : 'Show popcorn on the orange top only'}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="4" y="3.5" width="16" height="17" rx="3" />
+          <path d="M4 12h16" />
+          <path d="M8 7.5h.01M12 7.5h.01M16 7.5h.01" />
+        </svg>
+      </button>
       <button
         type="button"
         className="sound-toggle"
         onClick={toggleSound}
-        aria-pressed={soundOn}
-        aria-label={soundOn ? 'Mute pop sounds' : 'Unmute pop sounds'}
+        aria-pressed={soundMode !== 'off'}
+        aria-label={
+          soundMode === 'off'
+            ? 'Unmute pop sounds'
+            : soundMode === 'real'
+              ? 'Pop sounds on (recorded). Switch to the synth pop'
+              : 'Pop sounds on (synth). Mute'
+        }
+        title={soundMode === 'off' ? 'Sound off' : soundMode === 'real' ? 'Recorded pops' : 'Synth pops'}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M11 5L6 9H2v6h4l5 4V5z" />
-          {soundOn ? (
-            <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" />
-          ) : (
-            <path d="M22 9l-6 6M16 9l6 6" />
-          )}
+          {soundMode === 'real' && <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" />}
+          {soundMode === 'synth' && <path d="M15 10l2 4 2-4 2 4" />}
+          {soundMode === 'off' && <path d="M22 9l-6 6M16 9l6 6" />}
         </svg>
       </button>
+      </>
         ,
         document.body,
       )}
