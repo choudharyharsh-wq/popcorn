@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
-import p1 from './assets/popcorn/p1.webp'
-import p2 from './assets/popcorn/p2.webp'
-import p3 from './assets/popcorn/p3.webp'
-import p4 from './assets/popcorn/p4.webp'
-import p5 from './assets/popcorn/p5.webp'
-import p6 from './assets/popcorn/p6.webp'
+// Temporary: only p7-p9 are in use right now. The first six (p1-p6) are still in
+// src/assets/popcorn/; to bring them back, uncomment these imports and the array below.
+// import p1 from './assets/popcorn/p1.webp'
+// import p2 from './assets/popcorn/p2.webp'
+// import p3 from './assets/popcorn/p3.webp'
+// import p4 from './assets/popcorn/p4.webp'
+// import p5 from './assets/popcorn/p5.webp'
+// import p6 from './assets/popcorn/p6.webp'
+import p7 from './assets/popcorn/p7.webp'
+import p8 from './assets/popcorn/p8.webp'
+import p9 from './assets/popcorn/p9.webp'
 import popsUrl from './assets/sounds/pops.mp3'
 
 const REPEL_R = 120
@@ -61,7 +66,8 @@ function makeKernel() {
 // Real popcorn photos (transparent cut-outs). Every pop uses one of these.
 // They load after the page has finished, at low priority, so they never compete
 // with the hero artwork.
-const SPRITE_URLS = [p1, p2, p3, p4, p5, p6]
+const SPRITE_URLS = [p7, p8, p9]
+// const SPRITE_URLS = [p1, p2, p3, p4, p5, p6, p7, p8, p9] // everything
 let SPRITES = []
 
 function loadSprites() {
@@ -318,6 +324,7 @@ const noopSubscribe = () => () => {}
 export default function PopcornField({ onBigPop }) {
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false)
   const canvasRef = useRef(null)
+  const ghostRef = useRef(null)
   const [soundOn, setSoundOn] = useState(false)
   const soundRef = useRef(false)
   const audioRef = useRef(null)
@@ -351,8 +358,11 @@ export default function PopcornField({ onBigPop }) {
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    const ghost = ghostRef.current
+    if (!canvas || !ghost) return
     const ctx = canvas.getContext('2d')
+    const ghostCtx = ghost.getContext('2d')
+    const popEl = document.querySelector('.hero-pop')
     let w = 0 // page (world) width
     let h = 0 // page (world) height
     let vw = 0 // viewport
@@ -368,7 +378,7 @@ export default function PopcornField({ onBigPop }) {
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2)
-      vw = window.innerWidth
+      vw = document.documentElement.clientWidth // excludes the scrollbar, so the layer never causes sideways scroll
       vh = window.innerHeight
       w = document.documentElement.clientWidth
       h = Math.max(document.documentElement.scrollHeight, vh)
@@ -376,6 +386,10 @@ export default function PopcornField({ onBigPop }) {
       canvas.height = vh * dpr
       canvas.style.width = `${vw}px`
       canvas.style.height = `${vh}px`
+      ghost.width = canvas.width
+      ghost.height = canvas.height
+      ghost.style.width = `${vw}px`
+      ghost.style.height = `${vh}px`
       const target = clamp(Math.round((w * h) / 13000), 45, 220)
       while (kernels.length < target) {
         const k = makeKernel()
@@ -496,7 +510,7 @@ export default function PopcornField({ onBigPop }) {
       }
     }
 
-    function draw() {
+    function drawScene() {
       const sy = window.scrollY
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -561,6 +575,24 @@ export default function PopcornField({ onBigPop }) {
           } else drawPopped(ctx, k)
         }
         ctx.restore()
+      }
+    }
+
+    // The same picture is copied onto a second layer that sits above the text and tools and is
+    // shown at 20% (CSS). On open background that adds nothing you can see; wherever the popcorn is
+    // behind an icon or text it shows through as a faint ghost instead of vanishing.
+    function draw() {
+      drawScene()
+      ghostCtx.setTransform(1, 0, 0, 1, 0, 0)
+      ghostCtx.clearRect(0, 0, ghost.width, ghost.height)
+      ghostCtx.drawImage(canvas, 0, 0)
+      // over the "pop" lettering the popcorn disappears completely: cut the lettering's own
+      // shape (its image, including its soft glow and shadow) out of the 20% layer
+      if (popEl && popEl.complete && popEl.naturalWidth) {
+        const r = popEl.getBoundingClientRect()
+        ghostCtx.globalCompositeOperation = 'destination-out'
+        ghostCtx.drawImage(popEl, r.left * dpr, r.top * dpr, r.width * dpr, r.height * dpr)
+        ghostCtx.globalCompositeOperation = 'source-over'
       }
     }
 
@@ -642,9 +674,11 @@ export default function PopcornField({ onBigPop }) {
 
   if (!mounted) return null
 
-  return createPortal(
+  return (
     <>
       <canvas ref={canvasRef} className="popcorn-canvas" aria-hidden="true" />
+      <canvas ref={ghostRef} className="popcorn-canvas popcorn-ghost" aria-hidden="true" />
+      {createPortal(
       <button
         type="button"
         className="sound-toggle"
@@ -661,7 +695,9 @@ export default function PopcornField({ onBigPop }) {
           )}
         </svg>
       </button>
-    </>,
-    document.body,
+        ,
+        document.body,
+      )}
+    </>
   )
 }

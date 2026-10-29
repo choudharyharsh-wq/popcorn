@@ -159,9 +159,10 @@ function Home() {
 
   return (
     <div className="landing">
+    {/* first, so its sticky screen-sized layer starts at the top of the page */}
+    <PopcornField />
     <div className="home">
       <HeroBackground />
-      <PopcornField />
       <main className="page">
         <h1 className="sr-only">Pop Design: web tools by the pop upi design team</h1>
 
@@ -192,8 +193,10 @@ function Home() {
     </div>
 
     <section className="intro" aria-label="About Pop Design">
-      <div className="intro-tiles" aria-hidden="true">
-        <div className="intro-tiles-inner" />
+      <div className="intro-bg" aria-hidden="true">
+        <div className="intro-tiles">
+          <div className="intro-tiles-inner" />
+        </div>
       </div>
       <p className="intro-text">{INTRO_TEXT}</p>
     </section>

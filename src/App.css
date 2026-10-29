@@ -123,18 +123,28 @@
   overflow: hidden;
   touch-action: pan-y;
   color: #e8e8e6;
-  background: #0c0a08;
 }
 
 .popcorn-canvas {
-  position: fixed;
-  inset: 0;
+  /* a screen-sized layer that stays in view while you scroll, drawn above the backgrounds
+     (plate, strip, tiles: z-index below -1) and below all text, icons and the wordmark */
+  position: sticky;
+  top: 0;
+  display: block;
+  height: 100svh;
+  margin-bottom: -100svh;
   pointer-events: none;
-  z-index: 4;
+  z-index: -1;
+}
+
+/* 20% copy of the popcorn drawn above the text and tools (see PopcornField.jsx) */
+.popcorn-ghost {
+  z-index: 5;
+  opacity: 0.2;
 }
 
 .home .page {
-  --u: min(calc(100cqw / 1512), calc(100cqh / 1215));
+  --u: min(calc(100cqw / 1512), calc(100svh / 1215));
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -152,7 +162,7 @@
 
 .home .grid {
   display: flex;
-  gap: clamp(18px, calc(var(--u) * 56), 52px);
+  gap: clamp(22px, calc(var(--u) * 78), 72px);
   margin: 0;
 }
 
@@ -176,7 +186,7 @@
 
 /* app-icon tiles: no card, just the icon and its name */
 .home .tool {
-  width: clamp(76px, calc(var(--u) * 124), 120px);
+  width: clamp(104px, calc(var(--u) * 215), 176px);
   padding: 0;
   gap: 9px;
   background: none;
@@ -205,7 +215,7 @@
 .home .tool:active .app-icon { transform: scale(0.9); }
 
 .home .label {
-  font-size: 13px;
+  font-size: clamp(14px, calc(var(--u) * 22), 17px);
   font-weight: 500;
   letter-spacing: -0.01em;
   color: #2b2520;
@@ -354,23 +364,20 @@
 }
 
 /* Figma hero backdrop: 1 --u = 1 design px (frame is 1512 wide) */
-.home { container-type: size; }
-
 .hero-bg {
   /* fit the whole artwork on screen: 1 --u = 1 Figma px */
-  --u: min(calc(100cqw / 1512), calc(100cqh / 1215));
+  --u: min(calc(100cqw / 1512), calc(100svh / 1215));
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  z-index: 0;
-  background: #1b0e09;
 }
 
 .hero-bg img { position: absolute; max-width: none; }
 
 /* the Figma gradient: lifted from the design's own render, stretched to fill the screen */
 .hero-plate {
+  z-index: -4;
   position: absolute;
   left: 50%;
   top: calc(var(--u) * -120);
@@ -429,6 +436,7 @@
 }
 
 .hero-strip {
+  z-index: -3;
   position: absolute;
   left: 0;
   bottom: 0;
@@ -503,9 +511,11 @@
   --u: min(calc(100cqw / 1512), calc(100svh / 1215));
   --sx: 1;
   --sy: 1;
-  --lift: 120; /* design px the white strip is raised, so the tool icons sit on white */
+  --lift: 190; /* design px the white strip is raised, so the tool icons sit on white */
   --strip-h: calc(var(--u) * (385 + var(--lift)));
   container-type: inline-size;
+  isolation: isolate;
+  background: #0c0a08;
   width: 100%;
 }
 
@@ -517,6 +527,13 @@
   align-items: center;
   justify-content: center;
   padding: calc(var(--u) * 90) 1.5rem;
+}
+
+.intro-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -3;
   background: #ececec;
 }
 
@@ -626,9 +643,9 @@
 
 /* phones: a taller white strip carries the two rows of icons */
 @media (max-width: 640px) {
-  .landing { --strip-h: 52svh; }
+  .landing { --strip-h: 58svh; }
   .hero-art { top: calc(var(--u) * -120 + 9svh); }
-  .home .grid { grid-template-columns: repeat(2, 100px); gap: 30px 46px; }
-  .home .tool { width: 100px; }
-  .home .label { font-size: 14px; }
+  .home .grid { grid-template-columns: repeat(2, 128px); gap: 28px 34px; }
+  .home .tool { width: 128px; }
+  .home .label { font-size: 15px; }
 }
