@@ -3,6 +3,10 @@
     {
       "source": "/(tool[1-4])",
       "destination": "/shell.html"
+    },
+    {
+      "source": "/((?!.*\\..*).*)",
+      "destination": "/shell.html"
     }
   ],
   "headers": [
