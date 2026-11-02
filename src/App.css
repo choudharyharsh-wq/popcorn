@@ -258,18 +258,24 @@
 
 /* 404 */
 .notfound {
-  position: relative;
-  min-height: 100vh;
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.4rem;
   padding: 2rem 1.5rem;
   text-align: center;
   overflow: hidden;
+  touch-action: none;
   color: #e8e8e6;
   background: radial-gradient(ellipse at center, #1c1713 0%, #0c0a08 100%);
+}
+
+.popgame-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .notfound-code {
@@ -281,33 +287,230 @@
   font-weight: 500;
   line-height: 1;
   letter-spacing: -0.04em;
-  color: rgba(247, 232, 196, 0.05);
+  color: rgba(247, 232, 196, 0.04);
   user-select: none;
   pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.notfound-card {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  max-width: 30rem;
+  padding: 1rem;
+  transition: opacity 0.45s, transform 0.45s, visibility 0s 0.45s;
 }
 
 .notfound-title {
-  position: relative;
-  font-size: 34px;
+  font-size: clamp(34px, 7vw, 52px);
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.notfound-title span {
+.notfound-sub {
+  font-size: 17px;
+  color: #a8a298;
+}
+
+.notfound-sub em {
+  font-style: normal;
   color: #E24B4A;
 }
 
-.notfound-link {
-  position: relative;
-  font-size: 14px;
+.notfound-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.notfound-btn {
+  font: inherit;
+  font-size: 15px;
   font-weight: 500;
-  color: #E24B4A;
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
   text-decoration: none;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.notfound-link:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+.notfound-btn:active {
+  transform: scale(0.97);
+}
+
+.notfound-btn-primary {
+  color: #fff;
+  background: #E24B4A;
+}
+
+.notfound-btn-primary:hover {
+  background: #ee5d5c;
+}
+
+.notfound-btn-ghost {
+  color: #e8e8e6;
+  background: transparent;
+  border-color: #5a534a;
+}
+
+.notfound-btn-ghost:hover {
+  color: #FAC775;
+  border-color: #FAC775;
+}
+
+.notfound-hint {
+  margin-top: 1.4rem;
+  font-size: 12px;
+  color: #6a655d;
+  animation: hint-in 1s 2.5s both;
+}
+
+@keyframes hint-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* the game takes over: the message steps aside */
+.notfound-playing .notfound-card,
+.notfound-over .notfound-card {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.94);
+  pointer-events: none;
+}
+
+.notfound-playing .notfound-code,
+.notfound-over .notfound-code {
+  opacity: 0;
+}
+
+.popgame-hud {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 4vw, 2.2rem);
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid #2a2a28;
+  background: rgba(20, 17, 14, 0.78);
+  pointer-events: none;
+}
+
+.hud-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.6rem;
+  line-height: 1.1;
+}
+
+.hud-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a8680;
+}
+
+.hud-score {
+  font-size: 26px;
+  font-weight: 500;
+  color: #FAC775;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-value {
+  font-size: 17px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-lives {
+  flex-direction: row;
+  gap: 6px;
+}
+
+.hud-lives img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  transition: opacity 0.3s, filter 0.3s;
+}
+
+.hud-lives img[data-lost='true'] {
+  opacity: 0.2;
+  filter: grayscale(1);
+}
+
+.popgame-tip {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: max-content;
+  max-width: calc(100vw - 7rem);
+  text-align: center;
+  font-size: 13px;
+  color: #8a8680;
+  pointer-events: none;
+  animation: tip-out 0.6s 6s forwards;
+}
+
+@keyframes tip-out {
+  to { opacity: 0; }
+}
+
+.popgame-mute {
+  z-index: 4;
+}
+
+.popgame-over {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 2.4rem;
+  border-radius: 28px;
+  border: 1px solid #3a3530;
+  background: rgba(20, 17, 14, 0.92);
+  animation: over-in 0.4s both;
+}
+
+.popgame-over h2 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #E24B4A;
+}
+
+.over-score {
+  font-size: 64px;
+  font-weight: 500;
+  line-height: 1;
+  color: #FAC775;
+  font-variant-numeric: tabular-nums;
+}
+
+.over-best {
+  font-size: 14px;
+  color: #8a8680;
+}
+
+@keyframes over-in {
+  from { opacity: 0; transform: scale(0.92); }
 }
 
 .sr-only {
@@ -352,7 +555,7 @@
 .tool:focus-visible,
 .footer a:focus-visible,
 .sound-toggle:focus-visible,
-.notfound-link:focus-visible,
+.notfound-btn:focus-visible,
 .frame-notice a:focus-visible {
   outline: 2px solid #E24B4A;
   outline-offset: 3px;

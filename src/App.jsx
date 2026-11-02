@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import PopcornField from './PopcornField.jsx'
 import HeroBackground from './HeroBackground.jsx'
+import PopGame from './PopGame.jsx'
 import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, GlintIcon, DriftIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
 import './App.css'
 
@@ -225,13 +226,25 @@ function NotFound() {
     document.head.appendChild(meta)
     return () => meta.remove()
   }, [])
+  // idle: the 404 message over a quiet background | playing: the game | over: score card
+  const [mode, setMode] = useState('idle')
   return (
-    <main className="notfound">
+    <main className={`notfound notfound-${mode}`}>
+      <PopGame mode={mode} onStart={() => setMode('playing')} onOver={() => setMode('over')} />
       <div className="notfound-code" aria-hidden="true">404</div>
-      <h1 className="notfound-title">
-        <span className="sr-only">404: </span>this <span>kernel</span> never popped
-      </h1>
-      <Link to="/" className="notfound-link">← back to popcorn.design</Link>
+      <div className="notfound-card" aria-hidden={mode !== 'idle'} inert={mode !== 'idle'}>
+        <h1 className="notfound-title">
+          <span className="sr-only">404: </span>Page not found
+        </h1>
+        <p className="notfound-sub">this <em>kernel</em> never popped.</p>
+        <div className="notfound-actions">
+          <Link to="/" className="notfound-btn notfound-btn-primary">Go to home page</Link>
+          <button type="button" className="notfound-btn notfound-btn-ghost" onClick={() => setMode('playing')}>
+            Waste time on a game instead
+          </button>
+        </div>
+        <p className="notfound-hint">psst… the kernels in the background are poppable</p>
+      </div>
     </main>
   )
 }
