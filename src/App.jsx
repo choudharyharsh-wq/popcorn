@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom'
 import PopcornField from './PopcornField.jsx'
 import HeroBackground from './HeroBackground.jsx'
 import PopGame from './PopGame.jsx'
+import theatreUrl from './assets/scene/theatre.webp'
 import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, GlintIcon, DriftIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
 import './App.css'
 
@@ -226,25 +227,32 @@ function NotFound() {
     document.head.appendChild(meta)
     return () => meta.remove()
   }, [])
-  // idle: the 404 message over a quiet background | playing: the game | over: score card
+  // idle: waiting for the first click | playing | over (score card)
   const [mode, setMode] = useState('idle')
+  const [popped, setPopped] = useState(false)
+  const begin = () => setMode((m) => (m === 'idle' ? 'playing' : m))
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') begin()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
   return (
-    <main className={`notfound notfound-${mode}`}>
-      <PopGame mode={mode} onStart={() => setMode('playing')} onOver={() => setMode('over')} />
-      <div className="notfound-code" aria-hidden="true">404</div>
-      <div className="notfound-card" aria-hidden={mode !== 'idle'} inert={mode !== 'idle'}>
-        <h1 className="notfound-title">
-          <span className="sr-only">404: </span>Page not found
-        </h1>
-        <p className="notfound-sub">this <em>kernel</em> never popped.</p>
-        <div className="notfound-actions">
-          <Link to="/" className="notfound-btn notfound-btn-primary">Go to home page</Link>
-          <button type="button" className="notfound-btn notfound-btn-ghost" onClick={() => setMode('playing')}>
-            Waste time on a game instead
-          </button>
+    <main className="notfound" onPointerDown={(e) => !e.target.closest('a') && begin()}>
+      <div className="theatre">
+        <img src={theatreUrl} alt="" />
+        <div className="theatre-screen">
+          <h1 className="theatre-404">
+            404<span className="sr-only"> page not found</span>
+          </h1>
+          <p className={`theatre-hint${popped ? ' is-gone' : ''}`}>
+            {mode === 'idle' ? 'Click anywhere to start' : 'Click to pop, before 3 kernels burn'}
+          </p>
         </div>
-        <p className="notfound-hint">psst… the kernels in the background are poppable</p>
       </div>
+      <PopGame mode={mode} onStart={() => setMode('playing')} onOver={() => setMode('over')} onFirstPop={() => setPopped(true)} />
+      <Link to="/" className="notfound-home">← home</Link>
     </main>
   )
 }

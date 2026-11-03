@@ -20,6 +20,11 @@ const COMBO_WINDOW = 1.6 // seconds between pops that keep a combo alive
 const BEST_KEY = 'popcorn-404-best'
 const BURST = 0.09
 const PACE_MAX = 1.3
+// the opening: fast enough to be exciting, then a slightly gentler stretch to settle in, then normal
+const FAST_POPS = 8
+const SETTLE_POPS = 10
+const START_EASE = 0.92
+const SETTLE_EASE = 0.86
 
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
 const lerp = (a, b, t) => a + (b - a) * t
@@ -55,7 +60,7 @@ function readBest() {
   }
 }
 
-export default function PopGame({ mode, onStart, onOver }) {
+export default function PopGame({ mode, onStart, onOver, onFirstPop }) {
   const canvasRef = useRef(null)
   const modeRef = useRef(mode)
   const gameRef = useRef(null)
@@ -68,6 +73,10 @@ export default function PopGame({ mode, onStart, onOver }) {
   useEffect(() => {
     overRef.current = onOver
   }, [onOver])
+
+  useEffect(() => {
+    if (hud.score > 0) onFirstPop?.()
+  }, [hud.score, onFirstPop])
 
   useEffect(() => {
     modeRef.current = mode
@@ -100,6 +109,8 @@ export default function PopGame({ mode, onStart, onOver }) {
       lastBx: 0,
       pace: 0, // how hard the game is right now: 0 gentle .. 1 fast .. 1.3 frantic
       lastPopAt: 0,
+      pops: 0, // kernels popped this game (not counting a golden kernel's chain)
+      ease: START_EASE, // < 1 = gentler than the normal pace; used to shape the opening
       spawnT: 0.6,
       score: 0,
       lives: LIVES,
@@ -193,6 +204,7 @@ export default function PopGame({ mode, onStart, onOver }) {
         const quick = clamp(1 - (g.time - k.born) / 5)
         g.pace = Math.min(PACE_MAX, g.pace + 0.008 + 0.024 * quick + (g.combo >= 8 ? 0.01 : 0))
         g.lastPopAt = g.time
+        g.pops += 1
       }
       g.combo = g.time - g.lastPop < COMBO_WINDOW ? g.combo + 1 : 1
       g.lastPop = g.time
@@ -249,6 +261,9 @@ export default function PopGame({ mode, onStart, onOver }) {
         g.pace = Math.max(g.pace, clamp(g.playTime / 240) * 0.35)
       }
       const pace = g.pace
+      const easeTo = g.pops < FAST_POPS ? START_EASE : g.pops < FAST_POPS + SETTLE_POPS ? SETTLE_EASE : 1
+      // dropping into the gentler stretch is quick; coming back out to normal is gradual
+      g.ease += (easeTo - g.ease) * Math.min(1, dt * (easeTo > g.ease ? 0.5 : 3))
 
       g.spawnT -= dt
       if (g.spawnT <= 0) {
@@ -259,16 +274,16 @@ export default function PopGame({ mode, onStart, onOver }) {
           } else {
             // only so many kernels at once, so a fast player gets a tighter rhythm, not a wall of them
             const onScreen = g.kernels.filter((o) => o.state === 0).length
-            if (onScreen < Math.round(lerp(4, 7, clamp(pace / PACE_MAX)))) spawn()
+            if (onScreen < Math.round(lerp(6, 8, clamp(pace / PACE_MAX)))) spawn()
           }
-          g.spawnT = Math.max(0.5, lerp(1.1, 0.6, pace)) * (0.8 + Math.random() * 0.4)
+          g.spawnT = (Math.max(0.42, lerp(0.6, 0.5, pace)) / g.ease) * (0.8 + Math.random() * 0.4)
         } else {
-          if (!reduceMotion && g.kernels.length < 9) spawn()
+          if (!reduceMotion && modeRef.current !== 'idle' && g.kernels.length < 9) spawn()
           g.spawnT = 1.5 + Math.random()
         }
       }
 
-      const fall = live ? lerp(85, 175, pace) * S : 60 * S
+      const fall = live ? lerp(155, 205, pace) * g.ease * S : 60 * S
       const R = heatR()
       for (const k of g.kernels) {
         k.rot += k.vr * dt
@@ -464,6 +479,7 @@ export default function PopGame({ mode, onStart, onOver }) {
     function onDown(e) {
       onMove(e)
       m.active = true
+      ensureAudio().ac.resume() // browsers only allow sound after a click, so the audio starts here
       // a tap near a kernel (generous reach, kernels are small) pops it; the golden one needs a few
       for (const k of g.kernels) {
         if (k.state === 0 && Math.hypot(k.x - m.x, k.y - m.y) < Math.max(k.r * 2.6, 64 * S)) k.heat += k.gold ? 0.35 : 1
@@ -477,13 +493,14 @@ export default function PopGame({ mode, onStart, onOver }) {
     }
 
     g.start = () => {
-      ensureAudio().ac.resume()
       g.kernels = []
       g.floaters = []
       g.playTime = 0
       g.pace = 0
+      g.pops = 0
+      g.ease = START_EASE
       g.lastPopAt = g.time
-      g.spawnT = 0.5
+      g.spawnT = 0.25
       g.score = 0
       g.lives = LIVES
       g.combo = 0
@@ -558,10 +575,6 @@ export default function PopGame({ mode, onStart, onOver }) {
             {muted ? <path d="M22 9l-6 6M16 9l6 6" /> : <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" />}
           </svg>
         </button>
-      )}
-
-      {mode === 'playing' && (
-        <p className="popgame-tip">click on the kernels to pop them. don't let them burn.</p>
       )}
 
       {mode === 'over' && (
