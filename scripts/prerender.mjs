@@ -24,9 +24,9 @@ const images = [
   ['src/assets/hero/plate.webp', 'high'],
   ['src/assets/hero/design-fill.webp', 'high'],
   ['src/assets/hero/pop.svg', 'high'],
-  ['src/assets/hero/strip-shape.svg', null],
-  ['src/assets/hero/strip-glow.svg', null],
-  ['src/assets/hero/strip-texture.webp', null],
+  ['src/assets/hero/strip-shape.svg', 'high'],
+  ['src/assets/hero/strip-glow.svg', 'high'],
+  ['src/assets/hero/strip-texture.webp', 'high'],
 ]
 const preloads = [
   ...images.flatMap(([src, priority]) => {
@@ -35,6 +35,9 @@ const preloads = [
   }),
   '<link rel="preload" as="font" type="font/woff" href="/fonts/AwesomeSerifItalic-BdExraTall.woff" crossorigin />',
   '<link rel="preload" as="font" type="font/woff2" href="/fonts/DMSans-latin.woff2" crossorigin />',
+  // the caption and the tool names: without these the text first shows in a fallback font, then swaps
+  '<link rel="preload" as="font" type="font/woff2" href="/fonts/Figtree-500-latin.woff2" crossorigin />',
+  '<link rel="preload" as="font" type="font/woff2" href="/fonts/Figtree-600-latin.woff2" crossorigin />',
 ].join('\n    ')
 
 const marker = '<div id="root"></div>'

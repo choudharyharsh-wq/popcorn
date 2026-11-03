@@ -252,6 +252,8 @@
   transition: color 0.15s, border-color 0.15s;
 }
 .sound-toggle.hero-corn-toggle { right: 60px; }
+.sound-toggle { animation: toggle-in 0.6s 0.4s both; }
+@keyframes toggle-in { from { opacity: 0; } }
 .sound-toggle:hover { color: #e8e8e6; border-color: #444; }
 .sound-toggle[aria-pressed='true'] { color: #FAC775; }
 .sound-toggle svg { width: 18px; height: 18px; }
@@ -598,10 +600,8 @@
   top: calc(var(--u) * -120);
   width: calc(var(--u) * 1512);
   height: calc(var(--u) * 1215);
-  /* the tiny inline picture shows instantly, then the full-size plate paints over it */
-  background:
-    url('./assets/hero/plate.webp') center / 100% 100% no-repeat,
-    url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAgACgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5VpQMmrLWxz0qzaWZdhxUOaSNFTbditDbF+1W4tPZiPlrqdG0TzsZFdVY+GA7qAtcNbGKB6mGwKnucBaaO5wdtFezW/hcLFnZ0orzHmd2e/DK6SijxB9pPAqW3fY3FU9/NOWTFe04Ox8xGpFO51Om6k8RGDXT6dr7o6neK81S4I6GrtvcOcYauGtg+c9XDZjCn0PabXxMTByRRXltveShQNxorgWWHfLNaT6H/9k=') center / 100% 100% no-repeat;
+  /* small enough that the build inlines it: it paints with the CSS, with no request of its own */
+  background: url('./assets/hero/plate.webp') center / 100% 100% no-repeat;
   transform: translateX(-50%) scale(var(--sx), var(--sy));
   transform-origin: 50% 0;
 }
@@ -640,7 +640,8 @@
 
 .hero-design-pulse {
   mix-blend-mode: soft-light;
-  animation: hero-design-pulse 10.27s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  /* the negative delay starts the loop at its lit part, so the page opens with the glow already on */
+  animation: hero-design-pulse 10.27s cubic-bezier(0.5, 0, 0.5, 1) -2.8s infinite;
 }
 
 @keyframes hero-design-pulse {
@@ -727,8 +728,13 @@
 /* landing: the hero, then a section where the quilted white strip carries on */
 .landing {
   --u: min(calc(100cqw / 1512), calc(100svh / 1215));
-  --sx: 1;
-  --sy: 1;
+  /* how much the artwork is stretched to fill a screen that is wider or taller than the Figma frame.
+     Worked out here, in CSS, so the very first paint is already the right size (the script in
+     HeroBackground.jsx sets the same numbers later, as a fallback for old browsers).
+     tan(atan2(a, b)) turns two lengths into the unitless ratio a / b. */
+  --ratio: tan(atan2(100cqw, 100svh));
+  --sx: max(1, calc(var(--ratio) / 1.244444));
+  --sy: max(1, calc(1.244444 / var(--ratio)));
   --strip-h: calc(var(--u) * 430);
   container-type: inline-size;
   isolation: isolate;
