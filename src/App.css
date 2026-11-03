@@ -358,17 +358,23 @@
 
 .notfound-home {
   position: absolute;
-  top: 18px;
-  left: 20px;
+  bottom: 16px;
+  left: 18px;
   z-index: 4;
-  font-size: 13px;
-  color: #8a8680;
+  font-size: 16px;
+  font-weight: 500;
+  color: #c9c4ba;
   text-decoration: none;
-  transition: color 0.15s;
+  padding: 0.65rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid #4a443c;
+  background: rgba(20, 17, 14, 0.7);
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
 .notfound-home:hover {
-  color: #e8e8e6;
+  color: #FAC775;
+  border-color: #FAC775;
 }
 
 .notfound-actions {

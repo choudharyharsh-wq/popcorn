@@ -252,7 +252,7 @@ function NotFound() {
         </div>
       </div>
       <PopGame mode={mode} onStart={() => setMode('playing')} onOver={() => setMode('over')} onFirstPop={() => setPopped(true)} />
-      <Link to="/" className="notfound-home">← home</Link>
+      <Link to="/" className="notfound-home">← Back to home</Link>
     </main>
   )
 }
