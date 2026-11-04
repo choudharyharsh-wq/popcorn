@@ -268,8 +268,28 @@
   justify-content: center;
   overflow: hidden;
   touch-action: none;
-  color: #e8e8e6;
+  color: #f7e8c4;
+  font-family: 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif;
   background: #0c0a08;
+  /* one look for every pill and card here */
+  --edge: rgba(255, 154, 92, 0.28);
+  --glass: rgba(24, 15, 10, 0.72);
+}
+
+/* the "pop" wordmark from the home page, small, at the top */
+.notfound-logo {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: clamp(110px, 12vw, 150px);
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.notfound-logo.is-hidden {
+  opacity: 0;
 }
 
 /* the photo is scaled to cover the page, and the 404 sits on its screen, so both move together */
@@ -312,11 +332,29 @@
   text-align: center;
 }
 
+.theatre-msg,
 .theatre-404 {
-  font-size: 26cqw;
+  transition: opacity 0.5s;
+}
+
+.is-playing .theatre-msg,
+.is-playing .theatre-404 {
+  opacity: 0;
+}
+
+.theatre-msg {
+  font-size: clamp(14px, 3.4cqw, 30px);
   font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #f7e8c4;
+}
+
+.theatre-404 {
+  font-family: 'Awesome Serif Italic', Georgia, serif;
+  font-size: 26cqw;
+  font-weight: 400;
   line-height: 0.9;
-  letter-spacing: -0.04em;
+  letter-spacing: 0.06em;
   color: #f7e8c4;
   text-shadow: 0 0 6cqw rgba(255, 170, 80, 0.45);
 }
@@ -365,12 +403,12 @@
   z-index: 4;
   font-size: 16px;
   font-weight: 500;
-  color: #c9c4ba;
+  color: #f7e8c4;
   text-decoration: none;
   padding: 0.65rem 1.2rem;
   border-radius: 999px;
-  border: 1px solid #4a443c;
-  background: rgba(20, 17, 14, 0.7);
+  border: 1px solid var(--edge);
+  background: var(--glass);
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
@@ -404,18 +442,20 @@
 }
 
 .notfound-btn-primary {
-  color: #fff;
-  background: #E24B4A;
+  color: #2a1408;
+  font-weight: 600;
+  background: linear-gradient(#ffb877, #f0843c);
+  box-shadow: 0 0 24px rgba(240, 132, 60, 0.35);
 }
 
 .notfound-btn-primary:hover {
-  background: #ee5d5c;
+  background: linear-gradient(#ffc590, #f79150);
 }
 
 .notfound-btn-ghost {
-  color: #e8e8e6;
+  color: #f7e8c4;
   background: transparent;
-  border-color: #5a534a;
+  border-color: var(--edge);
 }
 
 .notfound-btn-ghost:hover {
@@ -434,8 +474,8 @@
   gap: clamp(1rem, 4vw, 2.2rem);
   padding: 0.6rem 1.4rem;
   border-radius: 999px;
-  border: 1px solid #2a2a28;
-  background: rgba(20, 17, 14, 0.78);
+  border: 1px solid var(--edge);
+  background: var(--glass);
   pointer-events: none;
 }
 
@@ -497,28 +537,37 @@
   gap: 0.5rem;
   padding: 2rem 2.4rem;
   border-radius: 28px;
-  border: 1px solid #3a3530;
-  background: rgba(20, 17, 14, 0.92);
+  border: 1px solid var(--edge);
+  /* same quilted grid as the home page, kept faint under a dark warm sheet */
+  background:
+    linear-gradient(rgba(22, 13, 8, 0.93), rgba(22, 13, 8, 0.93)),
+    url('./assets/hero/strip-texture.webp') 0 0 / 160px auto repeat;
+  box-shadow: 0 0 70px rgba(240, 120, 50, 0.2), inset 0 1px 0 rgba(255, 190, 140, 0.18);
   animation: over-in 0.4s both;
 }
 
 .popgame-over h2 {
-  font-size: 24px;
-  font-weight: 500;
-  color: #E24B4A;
+  font-family: 'Awesome Serif Italic', Georgia, serif;
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #ffb877;
 }
 
 .over-score {
-  font-size: 64px;
-  font-weight: 500;
+  font-family: 'Awesome Serif Italic', Georgia, serif;
+  font-size: 84px;
+  font-weight: 400;
   line-height: 1;
-  color: #FAC775;
+  letter-spacing: -0.01em;
+  color: #f7e8c4;
+  text-shadow: 0 0 40px rgba(255, 170, 80, 0.45);
   font-variant-numeric: tabular-nums;
 }
 
 .over-best {
   font-size: 14px;
-  color: #8a8680;
+  color: #b59a82;
 }
 
 @keyframes over-in {

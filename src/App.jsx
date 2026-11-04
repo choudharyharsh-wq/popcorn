@@ -4,6 +4,7 @@ import PopcornField from './PopcornField.jsx'
 import HeroBackground from './HeroBackground.jsx'
 import PopGame from './PopGame.jsx'
 import theatreUrl from './assets/scene/theatre.webp'
+import popLogoUrl from './assets/hero/pop.svg'
 import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, GlintIcon, DriftIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
 import './App.css'
 
@@ -240,14 +241,16 @@ function NotFound() {
   }, [])
   return (
     <main className="notfound" onPointerDown={(e) => !e.target.closest('a') && begin()}>
+      <img className={`notfound-logo${mode === 'playing' ? ' is-hidden' : ''}`} src={popLogoUrl} alt="" />
       <div className="theatre">
         <img src={theatreUrl} alt="" />
-        <div className="theatre-screen">
+        <div className={`theatre-screen${mode === 'idle' ? '' : ' is-playing'}`}>
+          <p className="theatre-msg">The page you are looking for doesn't exist</p>
           <h1 className="theatre-404">
             404<span className="sr-only"> page not found</span>
           </h1>
           <p className={`theatre-hint${popped ? ' is-gone' : ''}`}>
-            {mode === 'idle' ? 'Click anywhere to start' : 'Click to pop, before 3 kernels burn'}
+            {mode === 'idle' ? 'Click to start the game' : 'Click to pop, before 3 kernels burn'}
           </p>
         </div>
       </div>
