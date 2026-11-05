@@ -1,6 +1,11 @@
 // iOS-style app icons for the four tools: squircle, soft gradient, gloss, white glyph.
 // Plain inline SVG, a few hundred bytes each.
 
+import quillUrl from './assets/icons/quill.webp'
+import wiggleUrl from './assets/icons/wiggle.webp'
+import catalogUrl from './assets/icons/catalog.webp'
+import lottieUrl from './assets/icons/lottie.webp'
+
 const SQUIRCLE = 'M60 0C102 0 120 18 120 60S102 120 60 120 0 102 0 60 18 0 60 0Z'
 
 function AppIcon({ id, from, to, children }) {
@@ -41,22 +46,12 @@ const stroke = { fill: 'none', stroke: '#fff', strokeLinecap: 'round', strokeLin
 
 // Wiggle: a squiggle with a playhead dot (animation previewer)
 export function WiggleIcon() {
-  return (
-    <AppIcon id="wg" from="#C084FC" to="#EC4899">
-      <path d="M24 70C34 38 48 38 56 62S78 88 96 46" {...stroke} strokeWidth="10" />
-      <circle cx="96" cy="46" r="9" fill="#fff" />
-    </AppIcon>
-  )
+  return <img src={wiggleUrl} className="app-icon" alt="" width="384" height="384" draggable="false" />
 }
 
 // Quill: a feather nib (copy writer)
 export function QuillIcon() {
-  return (
-    <AppIcon id="qu" from="#FDE047" to="#F97316">
-      <path d="M88 26C62 26 42 44 36 72L30 96 52 88C80 80 96 56 88 26Z" fill="#fff" />
-      <path d="M34 92L68 52" {...stroke} stroke="#F97316" strokeWidth="5" />
-    </AppIcon>
-  )
+  return <img src={quillUrl} className="app-icon" alt="" width="256" height="256" draggable="false" />
 }
 
 // Poke: a tap with ripples (interaction library)
@@ -81,23 +76,17 @@ export function SquishIcon() {
   )
 }
 
+// AI cataloging tool
+export function CatalogIcon() {
+  return <img src={catalogUrl} className="app-icon" alt="" width="256" height="256" draggable="false" />
+}
+
+// Lottie creator
+export function LottieIcon() {
+  return <img src={lottieUrl} className="app-icon" alt="" width="256" height="256" draggable="false" />
+}
+
 // Placeholders for tools that are not built yet
-export function GlintIcon() {
-  return (
-    <AppIcon id="gl" from="#FDA4AF" to="#E11D48">
-      <path d="M60 24L68 52L96 60L68 68L60 96L52 68L24 60L52 52Z" fill="#fff" />
-    </AppIcon>
-  )
-}
-
-export function DriftIcon() {
-  return (
-    <AppIcon id="dr" from="#86EFAC" to="#16A34A">
-      <path d="M24 44H78M24 62H96M24 80H64" {...stroke} strokeWidth="9" />
-    </AppIcon>
-  )
-}
-
 export function NudgeIcon() {
   return (
     <AppIcon id="nd" from="#FCA5A5" to="#F59E0B">

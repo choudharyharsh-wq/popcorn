@@ -5,7 +5,7 @@ import HeroBackground from './HeroBackground.jsx'
 import PopGame from './PopGame.jsx'
 import theatreUrl from './assets/scene/theatre.webp'
 import popLogoUrl from './assets/hero/pop.svg'
-import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, GlintIcon, DriftIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
+import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, CatalogIcon, LottieIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
 import './App.css'
 
 // `name` is what the tool actually is (tooltips, screen readers); `label` is the friendly name on the tile.
@@ -50,8 +50,8 @@ const tools = [
 
 // not built yet: shown as placeholders so the grid reads as eight
 const soon = [
-  { label: 'Glint', Icon: GlintIcon },
-  { label: 'Drift', Icon: DriftIcon },
+  { label: 'AI Cataloging Tool', Icon: CatalogIcon },
+  { label: 'Lottie Creator', Icon: LottieIcon },
   { label: 'Nudge', Icon: NudgeIcon },
   { label: 'Flip', Icon: FlipIcon },
 ]
