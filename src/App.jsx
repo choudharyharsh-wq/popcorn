@@ -82,28 +82,10 @@ function ToolFrame({ tool }) {
   const { url } = tool
   const [loaded, setLoaded] = useState(false)
   const [slow, setSlow] = useState(false)
-  // launch splash: the tool's icon pops in, then zooms away once the tool has loaded
-  // (and the intro has had a moment to play)
-  const [minShown, setMinShown] = useState(false)
-  const [gaveUp, setGaveUp] = useState(false)
-  const [finished, setFinished] = useState(false)
-  const leaving = (loaded && minShown) || gaveUp
-  const phase = finished ? 'done' : leaving ? 'out' : 'in'
   useEffect(() => {
     const timer = setTimeout(() => setSlow(true), 12000)
-    const min = setTimeout(() => setMinShown(true), 900)
-    const max = setTimeout(() => setGaveUp(true), 8000)
-    return () => {
-      clearTimeout(timer)
-      clearTimeout(min)
-      clearTimeout(max)
-    }
+    return () => clearTimeout(timer)
   }, [])
-  useEffect(() => {
-    if (!leaving) return
-    const done = setTimeout(() => setFinished(true), 750)
-    return () => clearTimeout(done)
-  }, [leaving])
   return (
     <>
       <iframe
@@ -122,14 +104,6 @@ function ToolFrame({ tool }) {
         allow="clipboard-write; fullscreen"
         sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-popups allow-popups-to-escape-sandbox"
       />
-      {phase !== 'done' && (
-        <div className={`launch launch-${phase}`} style={{ '--tint': tool.tint }} aria-hidden="true">
-          <div className="launch-icon">
-            <tool.Icon />
-          </div>
-          <div className="launch-name">{tool.label}</div>
-        </div>
-      )}
       {slow && !loaded && (
         <div className="frame-notice" role="status">
           <span>this tool is taking a while to load.</span>
