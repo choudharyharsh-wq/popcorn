@@ -56,6 +56,20 @@ const soon = [
   { label: 'Flip', Icon: FlipIcon },
 ]
 
+// the order the tiles appear in on the home page (four per row); a label must match a tool or a placeholder above
+const GRID_ORDER = [
+  'Rive Previewer',
+  'AI Cataloging Tool',
+  'Copywriter Tool',
+  'Lottie Creator',
+  // second row: uncomment once their icons are ready
+  // 'Interaction Design Library',
+  // 'Image Compressor',
+  // 'Nudge',
+  // 'Flip',
+]
+const tiles = GRID_ORDER.map((label) => tools.find((t) => t.label === label) ?? soon.find((t) => t.label === label))
+
 // placeholder copy, 40 words
 const INTRO_TEXT =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.'
@@ -160,27 +174,28 @@ function Home() {
       </div>
       <h2 className="intro-title">Pick your POPcorn</h2>
       <nav className="grid" aria-label="Tools">
-        {tools.map((t) => (
-          <Link
-            key={t.name}
-            to={t.path}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="tool"
-            title={t.name}
-            aria-label={`${t.name} (opens in a new tab)`}
-            onClick={openTool}
-          >
-            <t.Icon />
-            <div className="label">{t.label}</div>
-          </Link>
-        ))}
-        {soon.map((t) => (
-          <div key={t.label} className="tool soon" aria-label={`${t.label}: coming soon`}>
-            <t.Icon />
-            <div className="label">{t.label}</div>
-          </div>
-        ))}
+        {tiles.map((t) =>
+          t.path ? (
+            <Link
+              key={t.name}
+              to={t.path}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tool"
+              title={t.name}
+              aria-label={`${t.name} (opens in a new tab)`}
+              onClick={openTool}
+            >
+              <t.Icon />
+              <div className="label">{t.label}</div>
+            </Link>
+          ) : (
+            <div key={t.label} className="tool soon" aria-label={`${t.label}: coming soon`}>
+              <t.Icon />
+              <div className="label">{t.label}</div>
+            </div>
+          ),
+        )}
       </nav>
       <p className="intro-text">{INTRO_TEXT}</p>
       <div className="footer">
