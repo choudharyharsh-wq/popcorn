@@ -8,11 +8,11 @@ import popLogoUrl from './assets/hero/pop.svg'
 import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, CatalogIcon, LottieIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
 import './App.css'
 
-// `name` is what the tool actually is (tooltips, screen readers); `label` is the friendly name on the tile.
+// `name` is the tooltip and screen-reader text; `label` is the text on the tile.
 const tools = [
   {
     name: 'Rive Previewer',
-    label: 'Wiggle',
+    label: 'Rive Previewer',
     tint: 'rgba(192, 132, 252, 0.6)',
     path: '/tool1',
     favicon: '/favicons/tool1.svg',
@@ -20,8 +20,8 @@ const tools = [
     Icon: WiggleIcon,
   },
   {
-    name: 'Copy Writer',
-    label: 'Quill',
+    name: 'Copywriter Tool',
+    label: 'Copywriter Tool',
     tint: 'rgba(251, 146, 60, 0.55)',
     path: '/tool2',
     favicon: '/favicons/tool2.svg',
@@ -29,8 +29,8 @@ const tools = [
     Icon: QuillIcon,
   },
   {
-    name: 'Interaction Library',
-    label: 'Poke',
+    name: 'Interaction Design Library',
+    label: 'Interaction Design Library',
     tint: 'rgba(56, 189, 248, 0.5)',
     path: '/tool3',
     favicon: '/favicons/tool3.svg',
@@ -38,8 +38,8 @@ const tools = [
     Icon: PokeIcon,
   },
   {
-    name: 'Pop Compress',
-    label: 'Squish',
+    name: 'Image Compressor',
+    label: 'Image Compressor',
     tint: 'rgba(99, 102, 241, 0.6)',
     path: '/tool4',
     favicon: '/favicons/tool4.svg',
@@ -168,7 +168,7 @@ function Home() {
             rel="noopener noreferrer"
             className="tool"
             title={t.name}
-            aria-label={`${t.label}: ${t.name} (opens in a new tab)`}
+            aria-label={`${t.name} (opens in a new tab)`}
             onClick={openTool}
           >
             <t.Icon />
