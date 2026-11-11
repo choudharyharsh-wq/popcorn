@@ -11,12 +11,12 @@
         </StateMachine>
     </Artboard>
     <ScriptAsset file="machine.luau" name="machine" id="0:90"/>
-    <ImageAsset file="assets/input-1.png" exportTypeValue="referenced" name="input-1" id="0:50"/>
-    <ImageAsset file="assets/input-2.png" exportTypeValue="referenced" name="input-2" id="0:51"/>
-    <ImageAsset file="assets/input-3.png" exportTypeValue="referenced" name="input-3" id="0:52"/>
-    <ImageAsset file="assets/output-1.png" exportTypeValue="referenced" name="output-1" id="0:53"/>
-    <ImageAsset file="assets/output-2.png" exportTypeValue="referenced" name="output-2" id="0:54"/>
-    <ImageAsset file="assets/output-3.png" exportTypeValue="referenced" name="output-3" id="0:55"/>
+    <ImageAsset file="assets/input-1.png" name="input-1" id="0:50"/>
+    <ImageAsset file="assets/input-2.png" name="input-2" id="0:51"/>
+    <ImageAsset file="assets/input-3.png" name="input-3" id="0:52"/>
+    <ImageAsset file="assets/output-1.png" name="output-1" id="0:53"/>
+    <ImageAsset file="assets/output-2.png" name="output-2" id="0:54"/>
+    <ImageAsset file="assets/output-3.png" name="output-3" id="0:55"/>
 
     <ImageAsset file="assets/machine-icon.png" name="machine-icon" id="0:60"/>
     <ImageAsset file="assets/tag-edited.png" name="tag-edited" id="0:70"/>

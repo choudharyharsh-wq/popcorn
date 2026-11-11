@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import popLogoUrl from './assets/hero/pop.svg'
 import WorkflowCanvas from './WorkflowCanvas.jsx'
+import MachineRive from './MachineRive.jsx'
 import { N8N_WORKFLOWS } from './n8nWorkflows.js'
 import './CatalogToolPage.css'
 
@@ -12,19 +13,19 @@ const PHASES = [
     key: 'edit',
     n: '01',
     name: 'Edit',
-    json: null,
+    json: '/catalog/edit-workflow.json',
   },
   {
     key: 'check',
     n: '02',
     name: 'Check',
-    json: null,
+    json: '/catalog/check-workflow.json',
   },
   {
     key: 'fix',
     n: '03',
     name: 'Fix',
-    json: null,
+    json: '/catalog/fix-workflow.json',
   },
 ]
 
@@ -101,6 +102,7 @@ function OutputPanel({ categories }) {
 
 export default function CatalogToolPage() {
   const [active, setActive] = useState(0)
+  const [eli5, setEli5] = useState(false)
   const phase = PHASES[active]
   return (
     <main className="ct">
@@ -112,6 +114,11 @@ export default function CatalogToolPage() {
           <span className="ct-live" aria-hidden="true" />
           AI Cataloging Tool
         </div>
+        <div className="ct-top-mid">
+          <button type="button" className={`ct-eli5${eli5 ? ' is-on' : ''}`} onClick={() => setEli5((v) => !v)}>
+            {eli5 ? '‹ back to the boring version' : "Explain it to me like I'm 5 🍼"}
+          </button>
+        </div>
         <div className="ct-top-links">
           <Link to="/stories/ai-cataloging" className="ct-top-link">
             Read the write-up
@@ -119,28 +126,34 @@ export default function CatalogToolPage() {
         </div>
       </header>
 
-      <div className="ct-body">
-        <div className="ct-stage">
-          <WorkflowCanvas key={phase.key} workflow={N8N_WORKFLOWS[phase.key]} />
-
-          <PhaseTabs phases={PHASES} active={active} onPick={setActive} />
-
-          <span className="ct-float ct-hint">scroll to zoom · drag to pan</span>
-
-          <a
-            className={`ct-float ct-download${phase.json ? '' : ' is-disabled'}`}
-            href={phase.json ?? undefined}
-            download={!!phase.json}
-            aria-disabled={!phase.json}
-            title={phase.json ? `Download ${phase.name} workflow (.json)` : 'Workflow export coming soon'}
-            onClick={(e) => !phase.json && e.preventDefault()}
-          >
-            ↓ Download .json
-          </a>
+      {eli5 ? (
+        <div className="ct-body">
+          <MachineRive />
         </div>
+      ) : (
+        <div className="ct-body">
+          <div className="ct-stage">
+            <WorkflowCanvas key={phase.key} workflow={N8N_WORKFLOWS[phase.key]} />
 
-        <OutputPanel categories={CATEGORIES} />
-      </div>
+            <PhaseTabs phases={PHASES} active={active} onPick={setActive} />
+
+            <span className="ct-float ct-hint">scroll to zoom · drag to pan</span>
+
+            <a
+              className={`ct-float ct-download${phase.json ? '' : ' is-disabled'}`}
+              href={phase.json ?? undefined}
+              download={!!phase.json}
+              aria-disabled={!phase.json}
+              title={phase.json ? `Download ${phase.name} workflow (.json)` : 'Workflow export coming soon'}
+              onClick={(e) => !phase.json && e.preventDefault()}
+            >
+              ↓ Download .json
+            </a>
+          </div>
+
+          <OutputPanel categories={CATEGORIES} />
+        </div>
+      )}
     </main>
   )
 }

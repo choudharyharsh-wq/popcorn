@@ -49,6 +49,41 @@
   box-shadow: 0 0 10px rgba(74, 208, 122, 0.8);
 }
 
+.ct-top-mid {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.ct-eli5 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  background: var(--glass);
+  color: var(--cream);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transform: rotate(-1.5deg);
+  transition: transform 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
+}
+.ct-eli5:hover {
+  transform: rotate(1.5deg) scale(1.04);
+  border-color: var(--accent);
+  color: #fff;
+}
+.ct-eli5.is-on {
+  transform: none;
+  color: #fff;
+  border-color: transparent;
+  background: var(--accent);
+}
+
 .ct-top-links {
   margin-left: auto;
 }

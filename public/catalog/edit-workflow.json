@@ -1,0 +1,447 @@
+{
+  "name": "AI Cataloging - Edit",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Rest of Apparel ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 796245651,
+          "mode": "list",
+          "cachedResultName": "shirts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=796245651"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('loop over data').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2944,
+        176
+      ],
+      "id": "0b157f0f-0403-4314-b8b3-3d032b124536",
+      "name": "Update row in sheet",
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Prompt sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 94376024,
+          "mode": "list",
+          "cachedResultName": "kidswear",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=94376024"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        256
+      ],
+      "id": "06a537b7-1189-4230-b447-84e5adfe453f",
+      "name": "Editing Prompts"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Rest of Apparel ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 796245651,
+          "mode": "list",
+          "cachedResultName": "shirts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=796245651"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        336,
+        256
+      ],
+      "id": "4500c9fb-117c-4328-a073-74a4a167082a",
+      "name": "Get Images Data"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        528,
+        256
+      ],
+      "id": "825e86b0-8e8d-4cce-aefa-2428a03ad0e8",
+      "name": "Filter Un-edited ones"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        944,
+        256
+      ],
+      "id": "64e3c0b5-cff0-4266-bb7b-08edd8f1c408",
+      "name": "loop over data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate a random 4-digit number (1000\u20139999)\nconst code = Math.floor(1000 + Math.random() * 90000);\n\n// Return it as output\nreturn [\n  {\n    json: {\n      uniqueCode: code\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        32
+      ],
+      "id": "ef038009-d830-47e5-9d0e-3bae32c557ea",
+      "name": "random unique code"
+    },
+    {
+      "parameters": {
+        "url": "=https://YOUR_SUPABASE_PROJECT.supabase.co/storage/v1/object/public/IMP%20IMAGE/Background%20image4by5.png",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "Background image"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1888,
+        32
+      ],
+      "id": "5834c2eb-784f-4cf8-b4a0-c80ded3d152d",
+      "name": "BG image",
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.sku_images }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1696,
+        368
+      ],
+      "id": "84a99ecf-6cb8-45c8-97ec-c7b48753f275",
+      "name": "Product Image",
+      "executeOnce": true,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2272,
+        176
+      ],
+      "id": "9e03b09e-959f-474c-a4fa-dd8292688cfb",
+      "name": "Merge Images"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "edit",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-image-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-image-preview (Nano Banana 2)"
+        },
+        "prompt": "={{ $('Editing Prompts').item.json['kids fullbody editing'] }}",
+        "images": {
+          "values": [
+            {
+              "binaryPropertyName": "Background Image"
+            },
+            {
+              "binaryPropertyName": "Product Image"
+            }
+          ]
+        },
+        "options": {
+          "binaryPropertyOutput": "edited"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2512,
+        176
+      ],
+      "id": "d2a305e9-e5b9-4dd3-893a-c53d48cc8214",
+      "name": "Image Editing",
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://YOUR_SUPABASE_PROJECT.supabase.co/storage/v1/object/tops/shirts/{{ $('random unique code').item.json.uniqueCode }}{{ $('loop over data').item.json.vendor_style_code.replaceAll(' ','') }}.png",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "edited",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2768,
+        176
+      ],
+      "id": "b4e654b9-378c-468a-bebc-84904fd0ab84",
+      "name": "Store in S3 Bucket",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "maxItems": 15000
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        720,
+        256
+      ],
+      "id": "fc63d8d9-b8f0-4ba0-8862-217c9dc9c4b3",
+      "name": "limit1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        256
+      ],
+      "id": "ca697b09-7751-4846-8cc6-72b11555532d",
+      "name": "Manual Trigger"
+    }
+  ],
+  "connections": {
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "loop over data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editing Prompts": {
+      "main": [
+        [
+          {
+            "node": "Get Images Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Images Data": {
+      "main": [
+        [
+          {
+            "node": "Filter Un-edited ones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Un-edited ones": {
+      "main": [
+        [
+          {
+            "node": "limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "loop over data": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Product Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "random unique code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "random unique code": {
+      "main": [
+        [
+          {
+            "node": "BG image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BG image": {
+      "main": [
+        [
+          {
+            "node": "Merge Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Image": {
+      "main": [
+        [
+          {
+            "node": "Merge Images",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Images": {
+      "main": [
+        [
+          {
+            "node": "Image Editing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Editing": {
+      "main": [
+        [
+          {
+            "node": "Store in S3 Bucket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in S3 Bucket": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "limit1": {
+      "main": [
+        [
+          {
+            "node": "loop over data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Editing Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  }
+}
