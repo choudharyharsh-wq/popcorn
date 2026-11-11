@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { lazy, Suspense, useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import PopcornField from './PopcornField.jsx'
 import HeroBackground from './HeroBackground.jsx'
@@ -7,6 +7,9 @@ import theatreUrl from './assets/scene/theatre.webp'
 import popLogoUrl from './assets/hero/pop.svg'
 import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, CatalogIcon, LottieIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
 import './App.css'
+
+// the cataloging page is its own chunk, so the home page doesn't pay for it
+const CatalogPage = lazy(() => import('./CatalogPage.jsx'))
 
 // `name` is the tooltip and screen-reader text; `label` is the text on the tile.
 const tools = [
@@ -46,11 +49,18 @@ const tools = [
     url: 'https://magical-puffpuff-fe79ba.netlify.app/',
     Icon: SquishIcon,
   },
+  {
+    name: 'AI Cataloging Tool',
+    label: 'AI Cataloging Tool',
+    path: '/ai-cataloging',
+    favicon: '/favicons/catalog.png',
+    page: true, // a page on this site, not an embedded tool
+    Icon: CatalogIcon,
+  },
 ]
 
 // not built yet: shown as placeholders so the grid reads as eight
 const soon = [
-  { label: 'AI Cataloging Tool', Icon: CatalogIcon },
   { label: 'Lottie Creator', Icon: LottieIcon },
   { label: 'Nudge', Icon: NudgeIcon },
   { label: 'Flip', Icon: FlipIcon },
@@ -85,7 +95,7 @@ function usePageIdentity(favicon, title) {
       link.rel = 'icon'
       document.head.appendChild(link)
     }
-    link.type = 'image/svg+xml'
+    link.type = favicon.endsWith('.png') ? 'image/png' : 'image/svg+xml'
     link.href = favicon
     document.title = title
   }, [favicon, title])
@@ -249,13 +259,24 @@ function NotFound() {
   )
 }
 
+// the cataloging tool is a page of this site; it sets its own title and tab icon
+function ToolPage({ tool }) {
+  usePageIdentity(tool.favicon, `${tool.name} · ${HOME_TITLE}`)
+  return (
+    <Suspense fallback={null}>
+      <CatalogPage />
+    </Suspense>
+  )
+}
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      {tools.map((t) => (
-        <Route key={t.path} path={t.path} element={<ToolFrame tool={t} />} />
-      ))}
+      {tools.map((t) =>
+        t.page ? null : <Route key={t.path} path={t.path} element={<ToolFrame tool={t} />} />,
+      )}
+      {tools.map((t) => (t.page ? <Route key={t.path} path={t.path} element={<ToolPage tool={t} />} /> : null))}
       <Route path="*" element={<NotFound />} />
     </Routes>
   )
