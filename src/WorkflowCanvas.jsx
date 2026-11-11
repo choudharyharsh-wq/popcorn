@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { ReactFlow, Background, BackgroundVariant, Controls, Handle, Position, ReactFlowProvider } from '@xyflow/react'
+import { ReactFlow, Background, BackgroundVariant, Controls, Handle, MarkerType, Position, ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import {
   ClockIcon,
@@ -115,7 +115,9 @@ function toFlow(workflow) {
             id: `${source}__${branchIndex}__${conn.node}__${i}`,
             source,
             target: conn.node,
-            type: 'bezier',
+            type: 'smoothstep',
+            pathOptions: { borderRadius: 14 },
+            markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: 'rgba(255, 255, 255, 0.6)' },
             label: label ?? targetLabel ?? undefined,
             labelBgPadding: [6, 3],
             labelBgBorderRadius: 5,

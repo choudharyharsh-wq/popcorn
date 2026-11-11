@@ -186,7 +186,7 @@
   flex: none;
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 320px;
   height: 100%;
   border-radius: 18px;
   border: 1px solid var(--edge);
@@ -219,6 +219,7 @@
 .ct-output-tabs {
   flex: none;
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   padding: 10px 14px 0;
 }
@@ -243,64 +244,81 @@
   background: var(--accent);
 }
 
-.ct-hero {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 12px 14px 14px;
-}
-.ct-hero-toggle {
-  flex: none;
-  align-self: center;
-  display: inline-flex;
-  gap: 3px;
-  padding: 3px;
-  margin-bottom: 10px;
-  border-radius: 999px;
-  border: 1px solid var(--edge);
-  background: rgba(0, 0, 0, 0.35);
-}
-.ct-hero-toggle button {
-  padding: 0.3rem 0.9rem;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.ct-hero-toggle button:hover {
-  color: var(--cream);
-}
-.ct-hero-toggle button.is-on {
-  color: #fff;
-  background: var(--accent);
-}
-
-.ct-hero-frame {
+/* Before/after grid compare: two overlaid 2x2 grids, one wiped via clip-path */
+.ct-compare {
   position: relative;
   flex: 1;
   min-height: 0;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--edge);
-  background: #0b0b0e;
+  margin: 14px;
+  touch-action: pan-y;
 }
-.ct-hero-frame img {
+.ct-compare-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+}
+.ct-compare-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+.ct-compare-grid img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+}
+.ct-compare-before {
+  clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+}
+.ct-compare-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin-left: -1px;
+  width: 2px;
+  background: #fff;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+}
+.ct-compare-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #fff;
+  color: #141417;
+  font-size: 11px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.ct-compare-knob::before {
+  content: '‹ ›';
+  letter-spacing: 1px;
+}
+.ct-compare-range {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  margin: 0;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  cursor: ew-resize;
 }
-.ct-hero-frame img.is-shown {
-  opacity: 1;
+.ct-compare:focus-within .ct-compare-line {
+  box-shadow: 0 0 0 2px var(--accent);
 }
 
 .ct a:focus-visible,

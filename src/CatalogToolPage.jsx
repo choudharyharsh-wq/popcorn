@@ -28,10 +28,13 @@ const PHASES = [
   },
 ]
 
-// Sample outputs, independent of which phase is selected.
-const PAIRS = [
-  { label: 'Footwear', before: '/catalog/pairs/sneakers-before.webp', after: '/catalog/pairs/sneakers-after.webp' },
-  { label: 'T-shirts', before: '/catalog/pairs/tshirts-before.webp', after: '/catalog/pairs/tshirts-after.webp' },
+// Sample outputs, independent of which phase is selected. Each category is 6 real
+// product photos cropped from app screenshots — before (vendor) and after (edited).
+const slot = (dir, kind, n) => Array.from({ length: n }, (_, i) => `/catalog/pairs/${dir}-${kind}-${i + 1}.webp`)
+const CATEGORIES = [
+  { label: 'T-shirts', before: slot('tshirts', 'before', 6), after: slot('tshirts', 'after', 6) },
+  { label: 'Caps', before: slot('caps', 'before', 6), after: slot('caps', 'after', 6) },
+  { label: 'Belts', before: slot('belts', 'before', 6), after: slot('belts', 'after', 6) },
 ]
 
 function PhaseTabs({ phases, active, onPick }) {
@@ -47,10 +50,10 @@ function PhaseTabs({ phases, active, onPick }) {
   )
 }
 
-function OutputPanel({ pairs }) {
+function OutputPanel({ categories }) {
   const [i, setI] = useState(0)
-  const [show, setShow] = useState('after')
-  const pair = pairs[i]
+  const [pos, setPos] = useState(50)
+  const cat = categories[i]
   return (
     <div className="ct-output">
       <div className="ct-output-head">
@@ -58,25 +61,39 @@ function OutputPanel({ pairs }) {
         <span className="ct-status">● pass</span>
       </div>
       <div className="ct-output-tabs" role="tablist" aria-label="Sample category">
-        {pairs.map((p, n) => (
-          <button key={p.label} type="button" role="tab" aria-selected={n === i} className={`ct-output-tab${n === i ? ' is-on' : ''}`} onClick={() => setI(n)}>
-            {p.label}
+        {categories.map((c, n) => (
+          <button key={c.label} type="button" role="tab" aria-selected={n === i} className={`ct-output-tab${n === i ? ' is-on' : ''}`} onClick={() => setI(n)}>
+            {c.label}
           </button>
         ))}
       </div>
-      <div className="ct-hero">
-        <div className="ct-hero-toggle" role="tablist" aria-label="Before or after">
-          <button type="button" role="tab" aria-selected={show === 'before'} className={show === 'before' ? 'is-on' : ''} onClick={() => setShow('before')}>
-            Before
-          </button>
-          <button type="button" role="tab" aria-selected={show === 'after'} className={show === 'after' ? 'is-on' : ''} onClick={() => setShow('after')}>
-            After
-          </button>
+      <div className="ct-compare">
+        <div className="ct-compare-grid">
+          {cat.after.map((src, n) => (
+            <div className="ct-compare-tile" key={`${cat.label}-after-${n}`}>
+              <img src={src} alt={`${cat.label}, after`} draggable="false" />
+            </div>
+          ))}
         </div>
-        <div className="ct-hero-frame">
-          <img key={`${pair.label}-before`} src={pair.before} alt={`${pair.label}, before`} draggable="false" className={show === 'before' ? 'is-shown' : ''} />
-          <img key={`${pair.label}-after`} src={pair.after} alt={`${pair.label}, after`} draggable="false" className={show === 'after' ? 'is-shown' : ''} />
+        <div className="ct-compare-grid ct-compare-before" style={{ '--pos': `${pos}%` }}>
+          {cat.before.map((src, n) => (
+            <div className="ct-compare-tile" key={`${cat.label}-before-${n}`}>
+              <img src={src} alt={`${cat.label}, before`} draggable="false" />
+            </div>
+          ))}
         </div>
+        <span className="ct-compare-line" style={{ left: `${pos}%` }} aria-hidden="true">
+          <span className="ct-compare-knob" />
+        </span>
+        <input
+          className="ct-compare-range"
+          type="range"
+          min="0"
+          max="100"
+          value={pos}
+          onChange={(e) => setPos(Number(e.target.value))}
+          aria-label={`Compare before and after: ${cat.label}`}
+        />
       </div>
     </div>
   )
@@ -122,7 +139,7 @@ export default function CatalogToolPage() {
           </a>
         </div>
 
-        <OutputPanel pairs={PAIRS} />
+        <OutputPanel categories={CATEGORIES} />
       </div>
     </main>
   )
