@@ -8,8 +8,9 @@ import popLogoUrl from './assets/hero/pop.svg'
 import { WiggleIcon, QuillIcon, PokeIcon, SquishIcon, CatalogIcon, LottieIcon, NudgeIcon, FlipIcon } from './ToolIcons.jsx'
 import './App.css'
 
-// the cataloging page is its own chunk, so the home page doesn't pay for it
-const CatalogPage = lazy(() => import('./CatalogPage.jsx'))
+// the cataloging tool and its write-up are their own chunks, so the home page doesn't pay for them
+const CatalogToolPage = lazy(() => import('./CatalogToolPage.jsx'))
+const CatalogStoryPage = lazy(() => import('./CatalogPage.jsx'))
 
 // `name` is the tooltip and screen-reader text; `label` is the text on the tile.
 const tools = [
@@ -264,7 +265,17 @@ function ToolPage({ tool }) {
   usePageIdentity(tool.favicon, `${tool.name} · ${HOME_TITLE}`)
   return (
     <Suspense fallback={null}>
-      <CatalogPage />
+      <CatalogToolPage />
+    </Suspense>
+  )
+}
+
+// the write-up behind the cataloging tool, kept at its own story URL
+function StoryPage() {
+  usePageIdentity('/favicons/catalog.png', `AI Cataloging Tool · ${HOME_TITLE}`)
+  return (
+    <Suspense fallback={null}>
+      <CatalogStoryPage />
     </Suspense>
   )
 }
@@ -277,6 +288,7 @@ function App() {
         t.page ? null : <Route key={t.path} path={t.path} element={<ToolFrame tool={t} />} />,
       )}
       {tools.map((t) => (t.page ? <Route key={t.path} path={t.path} element={<ToolPage tool={t} />} /> : null))}
+      <Route path="/stories/ai-cataloging" element={<StoryPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   )
