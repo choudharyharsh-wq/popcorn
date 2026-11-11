@@ -1,0 +1,35 @@
+<Rive version="1" kind="fragment">
+    <Artboard defaultStateMachineId="0:7" viewModelId="0:600" viewModelInstanceId="0:601" clip="true" styleId="0:5" width="1200" height="700" name="ai-catalog-machine" id="0:2">
+        <LayoutComponentStyle name="Artboard Style" id="0:5"/>
+        <ScriptedDrawable x="0" y="0" scriptAssetId="0:90" name="MachineScript" id="0:10"/>
+        <StateMachine name="Machine" id="0:7">
+            <StateMachineLayer name="Layer 1" id="0:8">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState/>
+            </StateMachineLayer>
+        </StateMachine>
+    </Artboard>
+    <ScriptAsset file="machine.luau" name="machine" id="0:90"/>
+    <ImageAsset file="assets/input-1.png" exportTypeValue="referenced" name="input-1" id="0:50"/>
+    <ImageAsset file="assets/input-2.png" exportTypeValue="referenced" name="input-2" id="0:51"/>
+    <ImageAsset file="assets/input-3.png" exportTypeValue="referenced" name="input-3" id="0:52"/>
+    <ImageAsset file="assets/output-1.png" exportTypeValue="referenced" name="output-1" id="0:53"/>
+    <ImageAsset file="assets/output-2.png" exportTypeValue="referenced" name="output-2" id="0:54"/>
+    <ImageAsset file="assets/output-3.png" exportTypeValue="referenced" name="output-3" id="0:55"/>
+
+    <ImageAsset file="assets/machine-icon.png" name="machine-icon" id="0:60"/>
+    <ImageAsset file="assets/tag-edited.png" name="tag-edited" id="0:70"/>
+    <ImageAsset file="assets/tag-pass.png" name="tag-pass" id="0:71"/>
+    <ImageAsset file="assets/tag-fail.png" name="tag-fail" id="0:72"/>
+    <ImageAsset file="assets/tag-reedited.png" name="tag-reedited" id="0:73"/>
+    <ImageAsset file="assets/hand.png" name="hand" id="0:80"/>
+    <ImageAsset file="assets/placeholder.png" name="slot-placeholder" id="0:81"/>
+
+    <ViewModel defaultInstanceId="0:601" name="Scene" id="0:600">
+        <ViewModelPropertyTrigger name="reset" id="0:610"/>
+        <ViewModelInstance exports="true" name="Default" id="0:601">
+            <ViewModelInstanceTrigger propertyValue="0" viewModelPropertyId="0:610"/>
+        </ViewModelInstance>
+    </ViewModel>
+</Rive>
