@@ -1,5 +1,12 @@
 import { useRive, Layout, Fit, Alignment } from '@rive-app/react-webgl2'
+import { RuntimeLoader } from '@rive-app/webgl2'
 import './MachineRive.css'
+
+// The runtime's wasm defaults to jsdelivr — blocked by the site's strict
+// connect-src CSP. Serve it from our own origin instead; set once, before
+// the first Rive instance loads.
+RuntimeLoader.setWasmUrl('/rive/rive.wasm')
+RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm')
 
 // The "explain it like I'm 5" view: a self-contained Rive scene (drag-and-drop machine,
 // fully driven by its own state machine/script — nothing here feeds it inputs).
