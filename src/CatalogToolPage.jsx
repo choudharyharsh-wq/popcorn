@@ -59,7 +59,6 @@ function OutputPanel({ categories }) {
     <div className="ct-output">
       <div className="ct-output-head">
         <span className="ct-panel-label">Output</span>
-        <span className="ct-status">● pass</span>
       </div>
       <div className="ct-output-tabs" role="tablist" aria-label="Sample category">
         {categories.map((c, n) => (
@@ -102,58 +101,64 @@ function OutputPanel({ categories }) {
 
 export default function CatalogToolPage() {
   const [active, setActive] = useState(0)
-  const [eli5, setEli5] = useState(false)
+  const [view, setView] = useState('flows')
   const phase = PHASES[active]
+  const isFlows = view === 'flows'
+
   return (
     <main className="ct">
       <header className="ct-top">
         <Link to="/" className="ct-logo" aria-label="popcorn.design home">
           <img src={popLogoUrl} alt="" />
         </Link>
-        <div className="ct-title">
-          <span className="ct-live" aria-hidden="true" />
-          AI Cataloging Tool
-        </div>
-        <div className="ct-top-mid">
-          <button type="button" className={`ct-eli5${eli5 ? ' is-on' : ''}`} onClick={() => setEli5((v) => !v)}>
-            {eli5 ? '‹ back to the boring version' : "Explain it to me like I'm 5 🍼"}
-          </button>
-        </div>
-        <div className="ct-top-links">
-          <Link to="/stories/ai-cataloging" className="ct-top-link">
-            Read the write-up
-          </Link>
-        </div>
       </header>
 
-      {eli5 ? (
-        <div className="ct-body">
-          <MachineRive />
-        </div>
-      ) : (
-        <div className="ct-body">
-          <div className="ct-stage">
-            <WorkflowCanvas key={phase.key} workflow={N8N_WORKFLOWS[phase.key]} />
-
-            <PhaseTabs phases={PHASES} active={active} onPick={setActive} />
-
-            <span className="ct-float ct-hint">scroll to zoom · drag to pan</span>
-
-            <a
-              className={`ct-float ct-download${phase.json ? '' : ' is-disabled'}`}
-              href={phase.json ?? undefined}
-              download={!!phase.json}
-              aria-disabled={!phase.json}
-              title={phase.json ? `Download ${phase.name} workflow (.json)` : 'Workflow export coming soon'}
-              onClick={(e) => !phase.json && e.preventDefault()}
-            >
-              ↓ Download .json
-            </a>
+      <div className="ct-subheader">
+        <div className="ct-subheader-main">
+          <div className="ct-title">
+            AI Cataloging Tool
+            <Link to="/stories/ai-cataloging" className="ct-title-chevron" aria-label="Read the write-up">
+              <span className="ct-chevron-text">Read more</span>
+              <span className="ct-chevron-arrow" aria-hidden="true">→</span>
+            </Link>
           </div>
-
-          <OutputPanel categories={CATEGORIES} />
+          <div className="ct-view-tabs" role="tablist" aria-label="View">
+            <button type="button" role="tab" aria-selected={isFlows} className={`ct-view-tab${isFlows ? ' is-on' : ''}`} onClick={() => setView('flows')}>
+              n8n flows
+            </button>
+            <button type="button" role="tab" aria-selected={!isFlows} className={`ct-view-tab ct-view-tab-fun${!isFlows ? ' is-on' : ''}`} onClick={() => setView('eli5')}>
+              Explain it to me like I'm 5 🍼
+            </button>
+          </div>
         </div>
-      )}
+      </div>
+
+      <div className="ct-body">
+        <div className="ct-stage">
+          {isFlows ? (
+            <>
+              <WorkflowCanvas key={phase.key} workflow={N8N_WORKFLOWS[phase.key]} />
+
+              <PhaseTabs phases={PHASES} active={active} onPick={setActive} />
+
+              <a
+                className={`ct-float ct-download${phase.json ? '' : ' is-disabled'}`}
+                href={phase.json ?? undefined}
+                download={!!phase.json}
+                aria-disabled={!phase.json}
+                title={phase.json ? `Download ${phase.name} workflow (.json)` : 'Workflow export coming soon'}
+                onClick={(e) => !phase.json && e.preventDefault()}
+              >
+                ↓ Download .json
+              </a>
+            </>
+          ) : (
+            <MachineRive />
+          )}
+        </div>
+
+        <OutputPanel categories={CATEGORIES} />
+      </div>
     </main>
   )
 }

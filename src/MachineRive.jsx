@@ -12,7 +12,7 @@ RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm')
 // fully driven by its own state machine/script — nothing here feeds it inputs).
 // enableGPUCanvas is required: the machine's script draws via Rive's GPU Canvas API
 // (a per-canvas WebGL context), which the plain 2D canvas renderer can't drive at all.
-export default function MachineRive() {
+export default function MachineRive({ children }) {
   const { RiveComponent } = useRive({
     src: '/rive/ai-cataloging-machine.riv',
     artboard: 'ai-catalog-machine',
@@ -26,6 +26,7 @@ export default function MachineRive() {
   return (
     <div className="mr-stage">
       <RiveComponent className="mr-canvas" />
+      {children}
     </div>
   )
 }
