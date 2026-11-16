@@ -209,11 +209,6 @@ function Home() {
         )}
       </nav>
       <p className="intro-text">{INTRO_TEXT}</p>
-      <div className="footer">
-        by <a href="https://popupi.com">pop upi</a>
-        {' · '}
-        <a href="https://popupi.com">contact</a>
-      </div>
     </section>
     </div>
   )

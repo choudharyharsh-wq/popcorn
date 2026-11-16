@@ -670,6 +670,7 @@
   top: calc(var(--u) * 205.2);
   width: calc(var(--u) * 673.06);
   height: calc(var(--u) * 397);
+  transition: opacity 0.3s ease;
 }
 
 .hero-design {
@@ -683,6 +684,13 @@
   font-weight: 400;
   font-size: 500.22px;
   letter-spacing: -15.0066px;
+  transition: opacity 0.3s ease;
+}
+
+/* "POP Design" hero wordmark: hidden while the hero popcorn toggle is on (see PopcornField.jsx) */
+body.corn-on .hero-pop,
+body.corn-on .hero-design {
+  opacity: 0;
 }
 
 .hero-design text { text-rendering: geometricPrecision; }
@@ -794,13 +802,12 @@
 .intro {
   position: relative;
   overflow: hidden;
-  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   gap: clamp(40px, calc(var(--u) * 110), 96px);
-  padding: calc(var(--u) * 12) 1.5rem calc(var(--u) * 120);
+  padding: calc(var(--u) * 12) 1.5rem calc(var(--u) * 48);
 }
 
 .intro-bg {

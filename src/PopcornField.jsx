@@ -285,6 +285,12 @@ export default function PopcornField({ onBigPop }) {
     bigPopRef.current = onBigPop
   }, [onBigPop])
 
+  // hide the "Tools by POPdesign" caption while the hero popcorn is on, bring it back once it's off
+  useEffect(() => {
+    document.body.classList.toggle('corn-on', cornMode === 'hero')
+    return () => document.body.classList.remove('corn-on')
+  }, [cornMode])
+
   function toggleSound() {
     const next = soundMode === 'off' ? 'real' : soundMode === 'real' ? 'synth' : 'off'
     if (next !== 'off' && !audioRef.current) {

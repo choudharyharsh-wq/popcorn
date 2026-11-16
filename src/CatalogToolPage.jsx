@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import popLogoUrl from './assets/hero/pop.svg'
 import WorkflowCanvas from './WorkflowCanvas.jsx'
@@ -55,6 +55,57 @@ function OutputPanel({ categories }) {
   const [i, setI] = useState(0)
   const [pos, setPos] = useState(50)
   const cat = categories[i]
+  const animatingRef = useRef(true)
+
+  useEffect(() => {
+    animatingRef.current = true
+
+    // segments: [startMs, endMs, startPos, endPos]
+    const segments = [
+      [500,  2000,  50, 100],   // middle → right (1500ms)
+      [2000, 2300, 100, 100],   // pause at right (300ms)
+      [2300, 4800, 100,   0],   // right → left   (2500ms)
+      [4800, 5100,   0,   0],   // pause at left  (300ms)
+      [5100, 6300,   0,  30],   // left → 30%     (1200ms)
+    ]
+    const totalMs = 6300
+    const easeInOut = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+
+    let rafId
+    let startTime
+
+    function animate(timestamp) {
+      if (!animatingRef.current) return
+      if (!startTime) startTime = timestamp
+      const elapsed = timestamp - startTime
+
+      if (elapsed >= totalMs) {
+        setPos(30)
+        return
+      }
+
+      let newPos = 50
+      for (const [t0, t1, p0, p1] of segments) {
+        if (elapsed < t0) { newPos = p0; break }
+        if (elapsed < t1) {
+          const t = (elapsed - t0) / (t1 - t0)
+          newPos = p0 + (p1 - p0) * easeInOut(t)
+          break
+        }
+        newPos = p1
+      }
+
+      setPos(newPos)
+      rafId = requestAnimationFrame(animate)
+    }
+
+    rafId = requestAnimationFrame(animate)
+    return () => {
+      animatingRef.current = false
+      cancelAnimationFrame(rafId)
+    }
+  }, [])
+
   return (
     <div className="ct-output">
       <div className="ct-output-head">
@@ -91,7 +142,7 @@ function OutputPanel({ categories }) {
           min="0"
           max="100"
           value={pos}
-          onChange={(e) => setPos(Number(e.target.value))}
+          onChange={(e) => { animatingRef.current = false; setPos(Number(e.target.value)) }}
           aria-label={`Compare before and after: ${cat.label}`}
         />
       </div>
